@@ -13,7 +13,7 @@ export class ProductosService {
   }
 
   findAll() {
-    return `This action returns all productos`;
+    return `Te amo `;
   }
 
   findOne(id: number) {
