@@ -3,8 +3,20 @@
   "WorkspaceRootPath": "D:\\Software Seguro\\1er Parcial\\Sistema-Ecovida_Microservicios-Rest-Soap\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{4A8D40BA-DF21-4A24-8A6E-307BD852F030}|soap-productos\\soap-productos.csproj|d:\\software seguro\\1er parcial\\sistema-ecovida_microservicios-rest-soap\\soap-productos\\service1.svc.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{4A8D40BA-DF21-4A24-8A6E-307BD852F030}|soap-productos\\soap-productos.csproj|solutionrelative:soap-productos\\service1.svc.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|D:\\Software Seguro\\1er Parcial\\Sistema-Ecovida_Microservicios-Rest-Soap\\soap-productos\\Web.config||{FA3CD31E-987B-443A-9B81-186104E8DAC1}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:soap-productos\\Web.config||{FA3CD31E-987B-443A-9B81-186104E8DAC1}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|D:\\Software Seguro\\1er Parcial\\Sistema-Ecovida_Microservicios-Rest-Soap\\ms-productos\\docker-compose.yml||{8B382828-6202-11D1-8870-0000F87579D2}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:ms-productos\\docker-compose.yml||{8B382828-6202-11D1-8870-0000F87579D2}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|D:\\Software Seguro\\1er Parcial\\Sistema-Ecovida_Microservicios-Rest-Soap\\soap-productos\\Service1.svc.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:soap-productos\\Service1.svc.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|D:\\Software Seguro\\1er Parcial\\Sistema-Ecovida_Microservicios-Rest-Soap\\soap-productos\\Service1.svc||{FB9167C9-D3B8-4EDA-8083-9AF6B6F6DA62}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:soap-productos\\Service1.svc||{FB9167C9-D3B8-4EDA-8083-9AF6B6F6DA62}"
     }
   ],
   "DocumentGroupContainers": [
@@ -39,14 +51,53 @@
             {
               "$type": "Document",
               "DocumentIndex": 0,
+              "Title": "Web.config",
+              "DocumentMoniker": "D:\\Software Seguro\\1er Parcial\\Sistema-Ecovida_Microservicios-Rest-Soap\\soap-productos\\Web.config",
+              "RelativeDocumentMoniker": "soap-productos\\Web.config",
+              "ToolTip": "D:\\Software Seguro\\1er Parcial\\Sistema-Ecovida_Microservicios-Rest-Soap\\soap-productos\\Web.config",
+              "RelativeToolTip": "soap-productos\\Web.config",
+              "ViewState": "AgIAAA8AAAAAAAAAAAAAACMAAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000601|",
+              "WhenOpened": "2024-12-01T04:11:20.907Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "docker-compose.yml",
+              "DocumentMoniker": "D:\\Software Seguro\\1er Parcial\\Sistema-Ecovida_Microservicios-Rest-Soap\\ms-productos\\docker-compose.yml",
+              "RelativeDocumentMoniker": "ms-productos\\docker-compose.yml",
+              "ToolTip": "D:\\Software Seguro\\1er Parcial\\Sistema-Ecovida_Microservicios-Rest-Soap\\ms-productos\\docker-compose.yml",
+              "RelativeToolTip": "ms-productos\\docker-compose.yml",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAcAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003775|",
+              "WhenOpened": "2024-12-01T04:10:13.909Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
               "Title": "Service1.svc.cs",
               "DocumentMoniker": "D:\\Software Seguro\\1er Parcial\\Sistema-Ecovida_Microservicios-Rest-Soap\\soap-productos\\Service1.svc.cs",
               "RelativeDocumentMoniker": "soap-productos\\Service1.svc.cs",
               "ToolTip": "D:\\Software Seguro\\1er Parcial\\Sistema-Ecovida_Microservicios-Rest-Soap\\soap-productos\\Service1.svc.cs",
               "RelativeToolTip": "soap-productos\\Service1.svc.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "ViewState": "AgIAAAcAAAAAAAAAAADwvyEAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-12-01T03:51:03.651Z",
+              "WhenOpened": "2024-12-01T04:02:14.343Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "Service1.svc",
+              "DocumentMoniker": "D:\\Software Seguro\\1er Parcial\\Sistema-Ecovida_Microservicios-Rest-Soap\\soap-productos\\Service1.svc",
+              "RelativeDocumentMoniker": "soap-productos\\Service1.svc",
+              "ToolTip": "D:\\Software Seguro\\1er Parcial\\Sistema-Ecovida_Microservicios-Rest-Soap\\soap-productos\\Service1.svc",
+              "RelativeToolTip": "soap-productos\\Service1.svc",
+              "LogicalView": "7651a703-06e5-11d1-8ebd-00a0c90f26ea",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003504|",
+              "WhenOpened": "2024-12-01T04:02:09.379Z",
               "EditorCaption": ""
             }
           ]
