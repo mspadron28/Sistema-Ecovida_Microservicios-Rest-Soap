@@ -12,8 +12,12 @@ export class PedidosService {
     return 'This action adds a new pedido';
   }
 
-  findAll() {
-    return `This action returns all pedidos`;
+  async findAll() {
+    try {
+      return await this.prisma.pedidos.findMany();
+    } catch (error) {
+      throw new Error(`Error, no existen carritos: ${error.message}`);
+    }
   }
 
   findOne(id: number) {

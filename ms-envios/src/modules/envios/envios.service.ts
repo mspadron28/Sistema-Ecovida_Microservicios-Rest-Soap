@@ -12,8 +12,12 @@ export class EnviosService {
     return 'This action adds a new envio';
   }
 
-  findAll() {
-    return `This action returns all envios`;
+  async findAll() {
+    try {
+      return await this.prisma.envios.findMany();
+    } catch (error) {
+      throw new Error(`Error, no existen envios: ${error.message}`);
+    }
   }
 
   findOne(id: number) {
