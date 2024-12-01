@@ -1,0 +1,7 @@
+D:\OneDrive - Personal\OneDrive\ESPE\Septimo Nivel\Desarrollo de Software Seguro\Primer Parcial\Sistema-Ecovida_Microservicios-Rest-Soap\emc\bin\emc.dll.config
+D:\OneDrive - Personal\OneDrive\ESPE\Septimo Nivel\Desarrollo de Software Seguro\Primer Parcial\Sistema-Ecovida_Microservicios-Rest-Soap\emc\bin\emc.dll
+D:\OneDrive - Personal\OneDrive\ESPE\Septimo Nivel\Desarrollo de Software Seguro\Primer Parcial\Sistema-Ecovida_Microservicios-Rest-Soap\emc\bin\emc.pdb
+D:\OneDrive - Personal\OneDrive\ESPE\Septimo Nivel\Desarrollo de Software Seguro\Primer Parcial\Sistema-Ecovida_Microservicios-Rest-Soap\emc\obj\Debug\emc.csproj.AssemblyReference.cache
+D:\OneDrive - Personal\OneDrive\ESPE\Septimo Nivel\Desarrollo de Software Seguro\Primer Parcial\Sistema-Ecovida_Microservicios-Rest-Soap\emc\obj\Debug\emc.csproj.CoreCompileInputs.cache
+D:\OneDrive - Personal\OneDrive\ESPE\Septimo Nivel\Desarrollo de Software Seguro\Primer Parcial\Sistema-Ecovida_Microservicios-Rest-Soap\emc\obj\Debug\emc.dll
+D:\OneDrive - Personal\OneDrive\ESPE\Septimo Nivel\Desarrollo de Software Seguro\Primer Parcial\Sistema-Ecovida_Microservicios-Rest-Soap\emc\obj\Debug\emc.pdb

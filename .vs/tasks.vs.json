@@ -1,0 +1,15 @@
+{
+  "version": "0.2.1",
+  "tasks": [
+    {
+      "taskLabel": "tarea-emc",
+      "appliesTo": "emc/",
+      "type": "launch"
+    },
+    {
+      "taskLabel": "tarea-emc",
+      "appliesTo": "emc/",
+      "type": "launch"
+    }
+  ]
+}
