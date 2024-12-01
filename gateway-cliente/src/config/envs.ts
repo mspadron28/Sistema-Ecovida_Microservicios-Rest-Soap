@@ -5,12 +5,19 @@ interface EnvVars{
     PORT: number;
     PRODUCTS_MICROSERVICE_HOST: string;
     PRODUCTS_MICROSERVICE_PORT: number;
+    //Carritos
+    CARRITOS_MICROSERVICE_HOST: string;
+    CARRITOS_MICROSERVICE_PORT: number;
+
 }
 
 const envsSchema = joi.object({
     PORT: joi.number().required(),
     PRODUCTS_MICROSERVICE_HOST: joi.string().required(),
-    PRODUCTS_MICROSERVICE_PORT: joi.string().required()
+    PRODUCTS_MICROSERVICE_PORT: joi.string().required(),
+    //Carritos
+    CARRITOS_MICROSERVICE_HOST: joi.string().required(),
+    CARRITOS_MICROSERVICE_PORT: joi.string().required(),
     
 })
 .unknown(true);
@@ -27,4 +34,7 @@ export const envs = {
     port: envVars.PORT,
     productsMicroserviceHost: envVars.PRODUCTS_MICROSERVICE_HOST,
     productsMicroservicePort: envVars.PRODUCTS_MICROSERVICE_PORT,
+     //Carritos
+    carritosMicroserviceHost: envVars.CARRITOS_MICROSERVICE_HOST,
+    carritosMicroservicePort: envVars.CARRITOS_MICROSERVICE_PORT,
 }

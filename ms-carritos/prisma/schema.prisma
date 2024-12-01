@@ -14,70 +14,10 @@ model carrito {
 }
 
 model carrito_detalle {
-  id_detalle      Int       @id @default(autoincrement())
+  id_detalle      Int     @id @default(autoincrement())
   id_carrito      Int
   id_producto     Int
   cantidad        Int
-  precio_unitario Decimal   @db.Decimal(18, 2)
-  carrito         carrito   @relation(fields: [id_carrito], references: [id_carrito], onDelete: NoAction, onUpdate: NoAction)
-  productos       productos @relation(fields: [id_producto], references: [id_producto], onDelete: NoAction, onUpdate: NoAction)
-}
-
-model categorias {
-  id_categoria Int         @id @default(autoincrement())
-  nombre       String      @db.VarChar(150)
-  productos    productos[]
-}
-
-model detalle_pedido {
-  id_detalle      Int       @id @default(autoincrement())
-  id_pedido       Int
-  id_producto     Int
-  cantidad        Int
-  precio_unitario Decimal   @db.Decimal(18, 2)
-  subtotal        Decimal   @db.Decimal(18, 2)
-  pedidos         pedidos   @relation(fields: [id_pedido], references: [id_pedido], onDelete: NoAction, onUpdate: NoAction)
-  productos       productos @relation(fields: [id_producto], references: [id_producto], onDelete: NoAction, onUpdate: NoAction)
-}
-
-model direcciones_envio {
-  id_direccion  Int    @id @default(autoincrement())
-  id_usuario    Int
-  pais          String @db.VarChar(100)
-  canton        String @db.VarChar(255)
-  parroquia     String @db.VarChar(100)
-  codigo_postal String @db.VarChar(20)
-  telefono      String @db.VarChar(10)
-}
-
-model envios {
-  id_envio      Int       @id @default(autoincrement())
-  id_pedido     Int
-  fecha_envio   DateTime? @db.Timestamp(6)
-  fecha_entrega DateTime? @db.Timestamp(6)
-  estado        String    @db.VarChar(50)
-  metodo_envio  String?   @db.VarChar(100)
-  pedidos       pedidos   @relation(fields: [id_pedido], references: [id_pedido], onDelete: NoAction, onUpdate: NoAction)
-}
-
-model pedidos {
-  id_pedido      Int              @id @default(autoincrement())
-  id_usuario     Int
-  fecha_pedido   DateTime?        @default(now()) @db.Timestamp(6)
-  estado         String           @db.VarChar(50)
-  total          Decimal          @db.Decimal(10, 2)
-  detalle_pedido detalle_pedido[]
-  envios         envios[]
-}
-
-model productos {
-  id_producto     Int               @id @default(autoincrement())
-  nombre          String            @db.VarChar(150)
-  precio          Decimal           @db.Decimal(10, 2)
-  stock           Int
-  id_categoria    Int
-  status          Boolean?          @default(true)
-  carrito_detalle carrito_detalle[]
-  detalle_pedido  detalle_pedido[]
-  categorias      categorias        @relation(fields: [id_categoria], references: [id_categoria], onDelete: NoAction, onUpdate: NoAction)
+  precio_unitario Decimal @db.Decimal(18, 2)
+  carrito         carrito @relation(fields: [id_carrito], references: [id_carrito], onDelete: NoAction, onUpdate: NoAction)
 }

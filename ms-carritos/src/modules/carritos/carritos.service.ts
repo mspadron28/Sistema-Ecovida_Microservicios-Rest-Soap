@@ -12,12 +12,13 @@ export class CarritosService {
     return 'This action adds a new carrito';
   }
 
-  async findAll() {
-    try {
+  findAll() {
+    return 'Love u'
+    /*try {
       return await this.prisma.carrito.findMany();
     } catch (error) {
       throw new Error(`Error, no existen carritos: ${error.message}`);
-    }
+    }*/
   }
 
   findOne(id: number) {
