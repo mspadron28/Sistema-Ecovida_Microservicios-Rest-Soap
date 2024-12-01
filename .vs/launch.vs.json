@@ -1,0 +1,12 @@
+{
+  "version": "0.2.1",
+  "defaults": {},
+  "configurations": [
+    {
+      "type": "coreclr",
+      "name": "Service1.svc.cs",
+      "project": "soap-productos\\Service1.svc.cs",
+      "projectTarget": ""
+    }
+  ]
+}

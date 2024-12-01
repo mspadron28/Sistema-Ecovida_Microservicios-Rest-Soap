@@ -1,0 +1,7 @@
+D:\Software Seguro\1er Parcial\Sistema-Ecovida_Microservicios-Rest-Soap\soap-productos\bin\soap-productos.dll.config
+D:\Software Seguro\1er Parcial\Sistema-Ecovida_Microservicios-Rest-Soap\soap-productos\bin\soap-productos.dll
+D:\Software Seguro\1er Parcial\Sistema-Ecovida_Microservicios-Rest-Soap\soap-productos\bin\soap-productos.pdb
+D:\Software Seguro\1er Parcial\Sistema-Ecovida_Microservicios-Rest-Soap\soap-productos\obj\Debug\soap-productos.csproj.AssemblyReference.cache
+D:\Software Seguro\1er Parcial\Sistema-Ecovida_Microservicios-Rest-Soap\soap-productos\obj\Debug\soap-productos.csproj.CoreCompileInputs.cache
+D:\Software Seguro\1er Parcial\Sistema-Ecovida_Microservicios-Rest-Soap\soap-productos\obj\Debug\soap-productos.dll
+D:\Software Seguro\1er Parcial\Sistema-Ecovida_Microservicios-Rest-Soap\soap-productos\obj\Debug\soap-productos.pdb
