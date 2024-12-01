@@ -15,9 +15,14 @@ export class ProductosController {
     return 
   }
 
-  @Get()
+  @Get('all')
   findAll() {
     return this.productsClient.send('findAllProductos',{})
+  }
+
+  @Get('stock')
+  findAllProductosStock() {
+    return this.productsClient.send('findAllProductosStock',{})
   }
 
   @Get(':id')

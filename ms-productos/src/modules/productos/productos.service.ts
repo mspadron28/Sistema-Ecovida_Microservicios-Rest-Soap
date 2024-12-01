@@ -13,7 +13,16 @@ export class ProductosService {
   }
 
   findAll() {
-    return `Te amo `;
+    return this.prisma.productos.findMany();
+  }
+
+  findAllProductsWithStock(){
+    return this.prisma.productos.findMany({
+      select:{
+        nombre: true,
+        stock: true
+      }
+    })
   }
 
   findOne(id: number) {

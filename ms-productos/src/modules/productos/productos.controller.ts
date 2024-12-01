@@ -18,6 +18,11 @@ export class ProductosController {
     return this.productosService.findAll();
   }
 
+  @MessagePattern('findAllProductosStock')
+  findAllProductsWithStock() {
+    return this.productosService.findAllProductsWithStock();
+  }
+
   @MessagePattern('findOneProducto')
   findOne(@Payload() id: number) {
     return this.productosService.findOne(id);
@@ -25,7 +30,10 @@ export class ProductosController {
 
   @MessagePattern('updateProducto')
   update(@Payload() updateProductoDto: UpdateProductoDto) {
-    return this.productosService.update(updateProductoDto.id, updateProductoDto);
+    return this.productosService.update(
+      updateProductoDto.id,
+      updateProductoDto,
+    );
   }
 
   @MessagePattern('removeProducto')
