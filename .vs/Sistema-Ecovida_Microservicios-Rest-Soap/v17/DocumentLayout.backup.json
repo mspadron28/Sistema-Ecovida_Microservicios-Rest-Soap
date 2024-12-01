@@ -13,10 +13,6 @@
     {
       "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|D:\\OneDrive - Personal\\OneDrive\\ESPE\\Septimo Nivel\\Desarrollo de Software Seguro\\Primer Parcial\\Sistema-Ecovida_Microservicios-Rest-Soap\\.vs\\tasks.vs.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
       "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:.vs\\tasks.vs.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|D:\\OneDrive - Personal\\OneDrive\\ESPE\\Septimo Nivel\\Desarrollo de Software Seguro\\Primer Parcial\\Sistema-Ecovida_Microservicios-Rest-Soap\\emc\\emc.csproj.user||{FA3CD31E-987B-443A-9B81-186104E8DAC1}",
-      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:emc\\emc.csproj.user||{FA3CD31E-987B-443A-9B81-186104E8DAC1}"
     }
   ],
   "DocumentGroupContainers": [
@@ -85,19 +81,6 @@
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAMAAAAEAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
               "WhenOpened": "2024-12-01T02:29:04.153Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 3,
-              "Title": "emc.csproj.user",
-              "DocumentMoniker": "D:\\OneDrive - Personal\\OneDrive\\ESPE\\Septimo Nivel\\Desarrollo de Software Seguro\\Primer Parcial\\Sistema-Ecovida_Microservicios-Rest-Soap\\emc\\emc.csproj.user",
-              "RelativeDocumentMoniker": "emc\\emc.csproj.user",
-              "ToolTip": "D:\\OneDrive - Personal\\OneDrive\\ESPE\\Septimo Nivel\\Desarrollo de Software Seguro\\Primer Parcial\\Sistema-Ecovida_Microservicios-Rest-Soap\\emc\\emc.csproj.user",
-              "RelativeToolTip": "emc\\emc.csproj.user",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003464|",
-              "WhenOpened": "2024-12-01T02:23:17.723Z",
               "EditorCaption": ""
             }
           ]
