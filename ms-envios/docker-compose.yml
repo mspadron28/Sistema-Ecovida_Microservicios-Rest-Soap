@@ -1,0 +1,17 @@
+version: '3.8'
+
+services:
+  envios-db:
+    image: postgres:17
+    container_name: envios_database
+    environment:
+      POSTGRES_USER: ecovida
+      POSTGRES_PASSWORD: ecovida
+      POSTGRES_DB: enviosdb
+    ports:
+      - "5530:5432"
+    volumes:
+      - ./backuppg:/var/lib/postgresql/data
+
+volumes:
+  backuppg:

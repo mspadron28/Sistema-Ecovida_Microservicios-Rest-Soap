@@ -1,0 +1,17 @@
+version: '3.8'
+
+services:
+  carritos-db:
+    image: postgres:17
+    container_name: carritos_database
+    environment:
+      POSTGRES_USER: ecovida
+      POSTGRES_PASSWORD: ecovida
+      POSTGRES_DB: carritosdb
+    ports:
+      - "5529:5432"
+    volumes:
+      - ./backuppg:/var/lib/postgresql/data
+
+volumes:
+  backuppg:

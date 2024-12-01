@@ -1,0 +1,17 @@
+version: '3.8'
+
+services:
+  pedidos-db:
+    image: postgres:17
+    container_name: pedidos_database
+    environment:
+      POSTGRES_USER: ecovida
+      POSTGRES_PASSWORD: ecovida
+      POSTGRES_DB: pedidosdb
+    ports:
+      - "5531:5432"
+    volumes:
+      - ./backuppg:/var/lib/postgresql/data
+
+volumes:
+  backuppg:
