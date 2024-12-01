@@ -1,33 +1,49 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.Serialization;
+using System.Data;
 using System.ServiceModel;
-using System.ServiceModel.Web;
-using System.Text;
+using Npgsql;
 
 namespace soap_productos
 {
-    // NOTA: puede usar el comando "Rename" del menú "Refactorizar" para cambiar el nombre de clase "Service1" en el código, en svc y en el archivo de configuración.
-    // NOTE: para iniciar el Cliente de prueba WCF para probar este servicio, seleccione Service1.svc o Service1.svc.cs en el Explorador de soluciones e inicie la depuración.
     public class Service1 : IService1
     {
-        public string GetData(int value)
+        public List<Product> GetProducts()
         {
-            return string.Format("You entered: {0}", value);
-        }
+            var products = new List<Product>();
 
-        public CompositeType GetDataUsingDataContract(CompositeType composite)
-        {
-            if (composite == null)
+            // Configuración de la conexión a PostgreSQL
+            var connString = "Host=localhost;Username=ecovida;Password=ecovida;Database=productosdb";
+
+            try
             {
-                throw new ArgumentNullException("composite");
+                using (var conn = new NpgsqlConnection(connString))
+                {
+                    conn.Open();
+                    var cmd = new NpgsqlCommand("SELECT id_producto, nombre, precio, stock, imagen_url FROM productos WHERE activo = true", conn);
+                    var reader = cmd.ExecuteReader();
+
+                    while (reader.Read())
+                    {
+                        var product = new Product
+                        {
+                            Id = reader.GetInt32(0),
+                            Name = reader.GetString(1),
+                            Price = reader.GetDecimal(2),
+                            Stock = reader.GetInt32(3),
+                            ImageUrl = reader.IsDBNull(4) ? null : reader.GetString(4)
+                        };
+                        products.Add(product);
+                    }
+                }
             }
-            if (composite.BoolValue)
+            catch (Exception ex)
             {
-                composite.StringValue += "Suffix";
+                // Manejo de errores
+                Console.WriteLine($"Error al acceder a la base de datos: {ex.Message}");
             }
-            return composite;
+
+            return products;
         }
     }
 }
