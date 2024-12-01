@@ -22,7 +22,7 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 5,
+          "SelectedChildIndex": 6,
           "Children": [
             {
               "$type": "Bookmark",
@@ -45,17 +45,21 @@
               "Name": "ST:0:0:{0174dea2-fdbe-4ef1-8f99-c0beae78880f}"
             },
             {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{1c4feeaa-4718-4aa9-859d-94ce25d182ba}"
+            },
+            {
               "$type": "Document",
               "DocumentIndex": 0,
               "Title": "IService1.cs",
               "DocumentMoniker": "D:\\Software Seguro\\1er Parcial\\Sistema-Ecovida_Microservicios-Rest-Soap\\soap-productos\\IService1.cs",
               "RelativeDocumentMoniker": "soap-productos\\IService1.cs",
-              "ToolTip": "D:\\Software Seguro\\1er Parcial\\Sistema-Ecovida_Microservicios-Rest-Soap\\soap-productos\\IService1.cs",
-              "RelativeToolTip": "soap-productos\\IService1.cs",
-              "ViewState": "AgIAABUAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "ToolTip": "D:\\Software Seguro\\1er Parcial\\Sistema-Ecovida_Microservicios-Rest-Soap\\soap-productos\\IService1.cs [Solo lectura]",
+              "RelativeToolTip": "soap-productos\\IService1.cs [Solo lectura]",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA8AAAAFAAAAAQAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2024-12-01T04:20:24.1Z",
-              "EditorCaption": ""
+              "EditorCaption": " [Solo lectura]"
             },
             {
               "$type": "Document",
@@ -67,8 +71,7 @@
               "RelativeToolTip": "soap-productos\\Service1.svc.cs",
               "ViewState": "AgIAAAcAAAAAAAAAAADwvyEAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-12-01T04:02:14.343Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-12-01T04:02:14.343Z"
             },
             {
               "$type": "Document",
