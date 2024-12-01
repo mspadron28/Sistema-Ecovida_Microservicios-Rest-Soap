@@ -1,7 +1,8 @@
 {
   "ExpandedNodes": [
-    ""
+    "",
+    "\\soap-productos"
   ],
-  "SelectedNode": "\\emc",
+  "SelectedNode": "\\soap-productos\\Web.config",
   "PreviewInSolutionExplorer": false
 }
