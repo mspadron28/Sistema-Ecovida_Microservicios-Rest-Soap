@@ -12,17 +12,22 @@ export class CarritosService {
     return 'This action adds a new carrito';
   }
 
-  findAll() {
-    return 'Love u'
-    /*try {
+  async findAll() {
+    try {
       return await this.prisma.carrito.findMany();
     } catch (error) {
       throw new Error(`Error, no existen carritos: ${error.message}`);
-    }*/
+    }
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} carrito`;
+  async findOne(id: number) {
+    try {
+      return await this.prisma.carrito.findUnique({
+        where: {id_carrito: id}
+      })
+    } catch (error) {
+      throw new Error(`Error, no se encontro el carrito: ${error.message}`);
+    }
   }
 
   update(id: number, updateCarritoDto: UpdateCarritoDto) {
@@ -30,6 +35,12 @@ export class CarritosService {
   }
 
   remove(id: number) {
-    return `This action removes a #${id} carrito`;
+    try {
+      return this.prisma.carrito.delete({
+        where: {id_carrito: id}
+      })
+    } catch (error) {
+      throw new Error(`Error, no se pudo eliminar el carrito: ${error.message}`);
+    }
   }
 }
