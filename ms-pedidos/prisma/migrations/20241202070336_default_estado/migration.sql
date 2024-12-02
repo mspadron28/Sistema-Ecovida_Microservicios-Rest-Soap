@@ -1,0 +1,6 @@
+-- CreateEnum
+CREATE TYPE "PedidoStatus" AS ENUM ('PENDIENTE', 'EN_PROCESO', 'ENVIADO');
+
+-- AlterTable
+ALTER TABLE "pedidos" ALTER COLUMN "estado" SET DEFAULT 'PENDIENTE',
+ALTER COLUMN "estado" SET DATA TYPE TEXT;
