@@ -13,6 +13,12 @@ export class ProductosController {
   validateProduct(@Payload() ids: number[]){
     return this.productosService.validateProducts(ids);
   }
+  // Actulizar stock de un producto
+  @MessagePattern('actualizar_stock')
+  updateProductStock(@Payload() data: { idProducto: number; cantidad: number }) {
+    return this.productosService.updateProductStock(data);
+  }
+
 
   @MessagePattern('createProducto')
   create(@Payload() createProductoDto: CreateProductoDto) {
