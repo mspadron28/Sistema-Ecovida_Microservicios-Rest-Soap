@@ -1,42 +1,51 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Inject } from '@nestjs/common';
-import { CreateProductoDto } from './dto/create-producto.dto';
-import { UpdateProductoDto } from './dto/update-producto.dto';
-import { PRODUCT_SERVICE } from 'src/config';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  Inject,
+} from '@nestjs/common';
+
 import { ClientProxy } from '@nestjs/microservices';
+import { NATS_SERVICE } from 'src/config';
 
 @Controller('productos')
 export class ProductosController {
-  constructor(
-    @Inject(PRODUCT_SERVICE) private readonly productsClient: ClientProxy,
-  ) {}
-
+  constructor(@Inject(NATS_SERVICE) private readonly client: ClientProxy) {}
+  /*
   @Post()
   create(@Body() createProductoDto: CreateProductoDto) {
     return 
-  }
+  }*/
 
   @Get('all')
   findAll() {
-    return this.productsClient.send('findAllProductos',{})
+    return this.client.send('findAllProductos', {});
   }
 
   @Get('stock')
   findAllProductosStock() {
-    return this.productsClient.send('findAllProductosStock',{})
+    return this.client.send('findAllProductosStock', {});
   }
 
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return 
+    return;
   }
-
+  /*
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateProductoDto: UpdateProductoDto) {
-    return 
-  }
+  update(
+    @Param('id') id: string,
+    @Body() updateProductoDto: UpdateProductoDto,
+  ) {
+    return;
+  }*/
 
   @Delete(':id')
   remove(@Param('id') id: string) {
-    return 
+    return;
   }
 }

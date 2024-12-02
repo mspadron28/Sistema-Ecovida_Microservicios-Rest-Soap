@@ -6,24 +6,37 @@ import { RpcException } from '@nestjs/microservices';
 
 @Injectable()
 export class ProductosService {
-
   constructor(private prisma: PrismaService) {}
 
   create(createProductoDto: CreateProductoDto) {
-    return ;
+    return;
   }
 
   findAll() {
-    return this.prisma.productos.findMany();
+    const productos = this.prisma.productos.findMany();
+    if (!productos) {
+      throw new RpcException({
+        message: 'Some products were not found',
+        status: HttpStatus.BAD_REQUEST,
+      });
+    }
+    return productos;
   }
 
-  findAllProductsWithStock(){
-    return this.prisma.productos.findMany({
-      select:{
+  async findAllProductsWithStock() {
+    const productos = await this.prisma.productos.findMany({
+      select: {
         nombre: true,
-        stock: true
-      }
-    })
+        stock: true,
+      },
+    });
+    if (!productos) {
+      throw new RpcException({
+        message: 'Some products were not found',
+        status: HttpStatus.BAD_REQUEST,
+      });
+    }
+    return productos;
   }
 
   findOne(id: number) {

@@ -8,6 +8,12 @@ import { UpdateProductoDto } from './dto/update-producto.dto';
 export class ProductosController {
   constructor(private readonly productosService: ProductosService) {}
 
+  //Validar los ids mediante un arreglo de ellos
+  @MessagePattern('validate_productos')
+  validateProduct(@Payload() ids: number[]){
+    return this.productosService.validateProducts(ids);
+  }
+
   @MessagePattern('createProducto')
   create(@Payload() createProductoDto: CreateProductoDto) {
     return this.productosService.create(createProductoDto);

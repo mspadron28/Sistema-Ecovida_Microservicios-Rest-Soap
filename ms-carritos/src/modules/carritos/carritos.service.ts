@@ -1,16 +1,96 @@
-import { Injectable } from '@nestjs/common';
+import { HttpStatus, Inject, Injectable, Logger } from '@nestjs/common';
 import { CreateCarritoDto } from './dto/create-carrito.dto';
 import { UpdateCarritoDto } from './dto/update-carrito.dto';
 import { PrismaService } from '../prisma/prisma.service';
+import { NATS_SERVICE } from 'src/config';
+import { ClientProxy, RpcException } from '@nestjs/microservices';
+import { firstValueFrom } from 'rxjs';
 
 @Injectable()
 export class CarritosService {
 
-  constructor(private prisma: PrismaService) {}
+  constructor(private prisma: PrismaService,
+    @Inject(NATS_SERVICE) private readonly client: ClientProxy,
+  ) {}
 
-  create(createCarritoDto: CreateCarritoDto) {
-    return 'This action adds a new carrito';
+  async create(createCarritoDto: CreateCarritoDto) {
+    const logger = new Logger('VALIDACION');
+    try {
+      // 1. Confirmar los ids de los productos
+      const productIds = createCarritoDto.items.map((item) => item.idProducto);
+      const products: any[] = await firstValueFrom(
+        this.client.send('validate_productos', productIds),
+      );
+      
+      logger.log(`IDS ${productIds}`);
+      logger.log(`PRODUCTOS: ${JSON.stringify(products, null, 2)}`);
+
+      // 2. Calcular los valores totales del carrito
+      const precioTotal = createCarritoDto.items.reduce((acc, carritoItem) => {
+        const price = products.find(
+          (product) => product.id_producto === carritoItem.idProducto,
+        ).precio;
+        logger.log(`PRICE ${JSON.stringify(price, null, 2)}`);
+        /*
+        if (!product) {
+          throw new RpcException({
+            status: HttpStatus.BAD_REQUEST,
+            message: `Producto con id ${carritoItem.idProducto} no encontrado`,
+          });
+        }*/
+  
+        return acc + price * carritoItem.cantidad;
+      }, 0);
+         // Obtener todos los productos
+         const cantidadTotal = createCarritoDto.items.reduce((acc, carritoItem) => {
+          return acc + carritoItem.cantidad;
+        }, 0);
+      // 3. Crear la transacción de base de datos
+      const carrito = await this.prisma.carrito.create({
+        data: {
+          id_usuario: 1,
+          precioTotal: precioTotal,
+          cantidadTotal: cantidadTotal,
+          carrito_detalle: {
+            createMany: {
+              data: createCarritoDto.items.map((carritoItem) => ({
+                precio_unitario: products.find(
+                  (product) => product.id_producto === carritoItem.idProducto,
+                ).precio,
+                id_producto: carritoItem.idProducto,
+                cantidad: carritoItem.cantidad,
+              })),
+            },
+          },
+        },
+        include: {
+          carrito_detalle: {
+            select: {
+              id_detalle: true,
+              precio_unitario: true,
+              cantidad: true,
+              id_producto: true,
+            },
+          },
+        },
+      });
+  
+      // 4. Retornar el carrito con detalles, incluyendo nombres de los productos
+      return {
+        ...carrito,
+        carrito_detalle: carrito.carrito_detalle.map((detalle) => ({
+          ...detalle,
+          nombre: products.find((product) => product.id_producto === detalle.id_producto).nombre,
+        })),
+      };
+    } catch (error) {
+      throw new RpcException({
+        status: HttpStatus.BAD_REQUEST,
+        message: error.message || 'Error al crear el carrito',
+      });
+    }
   }
+
 
   async findAll() {
     try {
