@@ -8,8 +8,8 @@ import { firstValueFrom } from 'rxjs';
 
 @Injectable()
 export class CarritosService {
-
-  constructor(private prisma: PrismaService,
+  constructor(
+    private prisma: PrismaService,
     @Inject(NATS_SERVICE) private readonly client: ClientProxy,
   ) {}
 
@@ -21,30 +21,31 @@ export class CarritosService {
       const products: any[] = await firstValueFrom(
         this.client.send('validate_productos', productIds),
       );
-      
-      logger.log(`IDS ${productIds}`);
-      logger.log(`PRODUCTOS: ${JSON.stringify(products, null, 2)}`);
+      // 1.1 Disminuir stock en productos
+      for (const item of createCarritoDto.items) {
+        await firstValueFrom(
+          this.client.send('actualizar_stock', {
+            idProducto: item.idProducto,
+            cantidad: item.cantidad,
+          }),
+        );
+      }
 
       // 2. Calcular los valores totales del carrito
       const precioTotal = createCarritoDto.items.reduce((acc, carritoItem) => {
         const price = products.find(
           (product) => product.id_producto === carritoItem.idProducto,
         ).precio;
-        logger.log(`PRICE ${JSON.stringify(price, null, 2)}`);
-        /*
-        if (!product) {
-          throw new RpcException({
-            status: HttpStatus.BAD_REQUEST,
-            message: `Producto con id ${carritoItem.idProducto} no encontrado`,
-          });
-        }*/
-  
+
         return acc + price * carritoItem.cantidad;
       }, 0);
-         // Obtener todos los productos
-         const cantidadTotal = createCarritoDto.items.reduce((acc, carritoItem) => {
+      // Obtener todos los productos
+      const cantidadTotal = createCarritoDto.items.reduce(
+        (acc, carritoItem) => {
           return acc + carritoItem.cantidad;
-        }, 0);
+        },
+        0,
+      );
       // 3. Crear la transacción de base de datos
       const carrito = await this.prisma.carrito.create({
         data: {
@@ -74,13 +75,15 @@ export class CarritosService {
           },
         },
       });
-  
+
       // 4. Retornar el carrito con detalles, incluyendo nombres de los productos
       return {
         ...carrito,
         carrito_detalle: carrito.carrito_detalle.map((detalle) => ({
           ...detalle,
-          nombre: products.find((product) => product.id_producto === detalle.id_producto).nombre,
+          nombre: products.find(
+            (product) => product.id_producto === detalle.id_producto,
+          ).nombre,
         })),
       };
     } catch (error) {
@@ -90,7 +93,6 @@ export class CarritosService {
       });
     }
   }
-
 
   async findAll() {
     try {
@@ -103,8 +105,8 @@ export class CarritosService {
   async findOne(id: number) {
     try {
       return await this.prisma.carrito.findUnique({
-        where: {id_carrito: id}
-      })
+        where: { id_carrito: id },
+      });
     } catch (error) {
       throw new Error(`Error, no se encontro el carrito: ${error.message}`);
     }
@@ -117,10 +119,12 @@ export class CarritosService {
   remove(id: number) {
     try {
       return this.prisma.carrito.delete({
-        where: {id_carrito: id}
-      })
+        where: { id_carrito: id },
+      });
     } catch (error) {
-      throw new Error(`Error, no se pudo eliminar el carrito: ${error.message}`);
+      throw new Error(
+        `Error, no se pudo eliminar el carrito: ${error.message}`,
+      );
     }
   }
 }
