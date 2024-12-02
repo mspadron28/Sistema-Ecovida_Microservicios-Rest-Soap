@@ -1,7 +1,9 @@
 {
   "ExpandedNodes": [
     "",
-    "\\soap-productos"
+    "\\ms-productos\\src\\modules",
+    "\\ms-productos\\src\\modules\\productos"
   ],
+  "SelectedNode": "\\soap-productos",
   "PreviewInSolutionExplorer": false
 }
