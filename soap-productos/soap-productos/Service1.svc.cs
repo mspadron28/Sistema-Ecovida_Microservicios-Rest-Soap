@@ -1,33 +1,65 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.Serialization;
-using System.ServiceModel;
-using System.ServiceModel.Web;
-using System.Text;
+using System.Net.Http;
+using System.Threading.Tasks;
+using Newtonsoft.Json;
 
 namespace soap_productos
 {
-    // NOTA: puede usar el comando "Rename" del menú "Refactorizar" para cambiar el nombre de clase "Service1" en el código, en svc y en el archivo de configuración.
-    // NOTE: para iniciar el Cliente de prueba WCF para probar este servicio, seleccione Service1.svc o Service1.svc.cs en el Explorador de soluciones e inicie la depuración.
     public class Service1 : IService1
     {
-        public string GetData(int value)
+        private readonly HttpClient _httpClient;
+
+        public Service1()
         {
-            return string.Format("You entered: {0}", value);
+            _httpClient = new HttpClient
+            {
+                BaseAddress = new Uri("http://localhost:3000/productos/") // URL del microservicio de productos
+            };
         }
 
-        public CompositeType GetDataUsingDataContract(CompositeType composite)
+        public async Task<List<Product>> GetAllProducts()
         {
-            if (composite == null)
-            {
-                throw new ArgumentNullException("composite");
-            }
-            if (composite.BoolValue)
-            {
-                composite.StringValue += "Suffix";
-            }
-            return composite;
+            var response = await _httpClient.GetAsync("");
+            response.EnsureSuccessStatusCode();
+
+            var jsonResponse = await response.Content.ReadAsStringAsync();
+            return JsonConvert.DeserializeObject<List<Product>>(jsonResponse);
         }
+
+        public async Task<Product> GetProductById(int id)
+        {
+            var response = await _httpClient.GetAsync($"{id}");
+            response.EnsureSuccessStatusCode();
+
+            var jsonResponse = await response.Content.ReadAsStringAsync();
+            return JsonConvert.DeserializeObject<Product>(jsonResponse);
+        }
+
+        public async Task<List<ProductStock>> GetAllProductsWithStock()
+        {
+            var response = await _httpClient.GetAsync("stock");
+            response.EnsureSuccessStatusCode();
+
+            var jsonResponse = await response.Content.ReadAsStringAsync();
+            return JsonConvert.DeserializeObject<List<ProductStock>>(jsonResponse);
+        }
+    }
+
+    public class Product
+    {
+        public int Id { get; set; }
+        public string Nombre { get; set; }
+        public string Descripcion { get; set; }
+        public decimal Precio { get; set; }
+        public int Stock { get; set; }
+        public string ImagenUrl { get; set; }
+        public bool Activo { get; set; }
+    }
+
+    public class ProductStock
+    {
+        public string Nombre { get; set; }
+        public int Stock { get; set; }
     }
 }
