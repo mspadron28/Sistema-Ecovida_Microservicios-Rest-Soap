@@ -7,6 +7,22 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum PedidoStatus {
+  PENDIENTE
+  EN_PROCESO
+  ENVIADO
+}
+
+model pedidos {
+  id_pedido           Int              @id @default(autoincrement())
+  id_usuario          Int
+  fecha_pedido        DateTime?        @default(now()) @db.Timestamp(6)
+  estado              String           @default("PENDIENTE")
+  precioTotalPedido   Decimal          @db.Decimal(10, 2)
+  cantidadTotalPedido Int
+  detalle_pedido      detalle_pedido[]
+}
+
 model detalle_pedido {
   id_detalle      Int     @id @default(autoincrement())
   id_pedido       Int
@@ -15,13 +31,4 @@ model detalle_pedido {
   precio_unitario Decimal @db.Decimal(18, 2)
   subtotal        Decimal @db.Decimal(18, 2)
   pedidos         pedidos @relation(fields: [id_pedido], references: [id_pedido], onDelete: NoAction, onUpdate: NoAction)
-}
-
-model pedidos {
-  id_pedido      Int              @id @default(autoincrement())
-  id_usuario     Int
-  fecha_pedido   DateTime?        @default(now()) @db.Timestamp(6)
-  estado         String           @db.VarChar(50)
-  total          Decimal          @db.Decimal(10, 2)
-  detalle_pedido detalle_pedido[]
 }

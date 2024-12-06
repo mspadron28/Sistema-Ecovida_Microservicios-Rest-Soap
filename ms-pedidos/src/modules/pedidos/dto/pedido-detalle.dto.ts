@@ -1,7 +1,6 @@
 import { IsNumber, IsPositive } from "class-validator";
 
-
-export class CarritoDetalleDto {
+export class PedidoDetalleDto {
     @IsPositive()
     @IsNumber()
     idProducto: number;
