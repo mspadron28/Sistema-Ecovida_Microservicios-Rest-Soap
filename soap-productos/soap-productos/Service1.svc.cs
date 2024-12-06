@@ -1,130 +1,116 @@
 ﻿using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
-using System.Net.Http;
+using System.Text;
 using NATS.Client;
 
 namespace soap_productos
 {
-    public class Service1 : IService1
+    public class Service1 : IService1, IDisposable
     {
         private readonly IConnection _natsConnection;
 
         public Service1()
         {
-            // Crear una conexión a NATS
-            var options = ConnectionFactory.GetDefaultOptions();
-            _natsConnection = new ConnectionFactory().CreateConnection("nats://localhost:4222"); // Cambia la URL si es necesario
+            try
+            {
+                Log("Inicializando conexión a NATS...");
+                var options = ConnectionFactory.GetDefaultOptions();
+                _natsConnection = new ConnectionFactory().CreateConnection("nats://localhost:4222");
+                Log("Conexión a NATS establecida.");
+            }
+            catch (Exception ex)
+            {
+                Log($"Error al inicializar la conexión a NATS: {ex.Message}");
+                throw;
+            }
         }
 
         public List<Product> GetAllProducts()
         {
+            Log("Invocando GetAllProducts...");
+            return RequestAndDeserialize<List<Product>>("findAllProductos", null, "Error al obtener todos los productos");
+        }
+
+        public Product GetProductById(int id)
+        {
+            if (id <= 0)
+            {
+                throw new ArgumentException("El ID del producto debe ser mayor que cero.");
+            }
+
+            Log($"Invocando GetProductById con ID: {id}");
+            var requestPayload = SerializeToJson(id);
+            return RequestAndDeserialize<Product>("findOneProducto", requestPayload, $"Error al obtener el producto con ID {id}");
+        }
+
+        public List<ProductStock> GetProductsWithStock()
+        {
+            Log("Invocando GetProductsWithStock...");
+            return RequestAndDeserialize<List<ProductStock>>("findAllProductosStock", null, "Error al obtener productos con stock");
+        }
+
+        public List<Product> ValidateProducts(List<int> ids)
+        {
+            if (ids == null || ids.Count == 0)
+            {
+                throw new ArgumentException("La lista de IDs no puede estar vacía.");
+            }
+
+            Log($"Invocando ValidateProducts con IDs: {string.Join(", ", ids)}");
+            var requestPayload = SerializeToJson(ids);
+            return RequestAndDeserialize<List<Product>>("validate_productos", requestPayload, "Error al validar los productos");
+        }
+
+        private T RequestAndDeserialize<T>(string topic, byte[] requestPayload, string errorMessage)
+        {
             try
             {
-                // Enviar un mensaje de NATS al microservicio para obtener todos los productos
-                var message = _natsConnection.Request("findAllProductos", null);
-                var json = message.Data;
+                Log($"Enviando solicitud al tema NATS: {topic}");
+                if (requestPayload != null)
+                {
+                    Log($"Payload enviado: {Encoding.UTF8.GetString(requestPayload)}");
+                }
 
-                // Convertir byte[] a string
-                string jsonString = System.Text.Encoding.UTF8.GetString(json);
+                var message = _natsConnection.Request(topic, requestPayload);
+                var jsonString = Encoding.UTF8.GetString(message.Data);
+                Log($"Respuesta JSON del tema {topic}: {jsonString}");
 
-                // Verificar que el mensaje no esté vacío
                 if (string.IsNullOrEmpty(jsonString))
                 {
                     throw new Exception("La respuesta del microservicio está vacía.");
                 }
 
-                // Deserializar la respuesta
-                return JsonConvert.DeserializeObject<List<Product>>(jsonString);
+                return JsonConvert.DeserializeObject<T>(jsonString);
+            }
+            catch (JsonSerializationException ex)
+            {
+                Log($"Error de deserialización JSON: {ex.Message}");
+                throw new Exception($"{errorMessage}: Respuesta inválida.");
             }
             catch (Exception ex)
             {
-                // Manejo de errores
-                throw new Exception("Error al obtener todos los productos: " + ex.Message);
+                Log($"Error: {errorMessage} - {ex.Message}");
+                throw new Exception($"{errorMessage}: {ex.Message}");
             }
         }
 
-        public Product GetProductById(int id)
+        private byte[] SerializeToJson<T>(T obj)
         {
-            try
-            {
-                // Enviar un mensaje de NATS al microservicio para obtener un producto por ID
-                var jsonRequest = JsonConvert.SerializeObject(id);
-                var message = _natsConnection.Request("findOneProducto", System.Text.Encoding.UTF8.GetBytes(jsonRequest));
-                var json = message.Data;
-
-                // Convertir byte[] a string
-                string jsonString = System.Text.Encoding.UTF8.GetString(json);
-
-                // Verificar que el mensaje no esté vacío
-                if (string.IsNullOrEmpty(jsonString))
-                {
-                    throw new Exception($"La respuesta para el producto con ID {id} está vacía.");
-                }
-
-                // Deserializar la respuesta
-                return JsonConvert.DeserializeObject<Product>(jsonString);
-            }
-            catch (Exception ex)
-            {
-                // Manejo de errores
-                throw new Exception("Error al obtener el producto: " + ex.Message);
-            }
+            var jsonString = JsonConvert.SerializeObject(obj);
+            Log($"Serializando objeto a JSON: {jsonString}");
+            return Encoding.UTF8.GetBytes(jsonString);
         }
 
-        public List<ProductStock> GetProductsWithStock()
+        private void Log(string message)
         {
-            try
-            {
-                // Enviar un mensaje de NATS al microservicio para obtener productos con stock
-                var message = _natsConnection.Request("findAllProductosStock", null);
-                var json = message.Data;
-
-                // Convertir byte[] a string
-                string jsonString = System.Text.Encoding.UTF8.GetString(json);
-
-                // Verificar que el mensaje no esté vacío
-                if (string.IsNullOrEmpty(jsonString))
-                {
-                    throw new Exception("La respuesta del microservicio para productos con stock está vacía.");
-                }
-
-                // Deserializar la respuesta
-                return JsonConvert.DeserializeObject<List<ProductStock>>(jsonString);
-            }
-            catch (Exception ex)
-            {
-                // Manejo de errores
-                throw new Exception("Error al obtener productos con stock: " + ex.Message);
-            }
+            Console.WriteLine($"[{DateTime.Now}] {message}");
         }
 
-        public List<Product> ValidateProducts(List<int> ids)
+        public void Dispose()
         {
-            try
-            {
-                // Enviar un mensaje de NATS al microservicio para validar los productos
-                var jsonRequest = JsonConvert.SerializeObject(ids);
-                var message = _natsConnection.Request("validate_productos", System.Text.Encoding.UTF8.GetBytes(jsonRequest));
-                var json = message.Data;
-
-                // Convertir byte[] a string
-                string jsonString = System.Text.Encoding.UTF8.GetString(json);
-
-                // Verificar que el mensaje no esté vacío
-                if (string.IsNullOrEmpty(jsonString))
-                {
-                    throw new Exception("La respuesta del microservicio para la validación de productos está vacía.");
-                }
-
-                // Deserializar la respuesta
-                return JsonConvert.DeserializeObject<List<Product>>(jsonString);
-            }
-            catch (Exception ex)
-            {
-                // Manejo de errores
-                throw new Exception("Error al validar productos: " + ex.Message);
-            }
+            Log("Liberando recursos...");
+            _natsConnection?.Dispose();
         }
     }
 }

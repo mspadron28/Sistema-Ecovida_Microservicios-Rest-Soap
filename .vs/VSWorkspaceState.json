@@ -1,7 +1,9 @@
 {
   "ExpandedNodes": [
-    ""
+    "",
+    "\\soap-productos",
+    "\\soap-productos\\soap-productos"
   ],
-  "SelectedNode": "\\Git_Proyecto.sln",
+  "SelectedNode": "\\soap-productos\\soap-productos\\Service1.svc.cs",
   "PreviewInSolutionExplorer": false
 }
