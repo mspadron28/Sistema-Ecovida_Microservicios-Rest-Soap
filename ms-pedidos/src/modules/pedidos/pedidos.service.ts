@@ -8,8 +8,8 @@ import { firstValueFrom } from 'rxjs';
 
 @Injectable()
 export class PedidosService {
-  
-  constructor(private prisma: PrismaService,
+  constructor(
+    private prisma: PrismaService,
     @Inject(NATS_SERVICE) private readonly client: ClientProxy,
   ) {}
 
@@ -21,7 +21,7 @@ export class PedidosService {
       const products: any[] = await firstValueFrom(
         this.client.send('validate_productos', productIds),
       );
-  
+
       // 2. Actualizar stock en productos
       for (const item of createPedidoDto.items) {
         await firstValueFrom(
@@ -31,49 +31,72 @@ export class PedidosService {
           }),
         );
       }
-  
+
+      // 2. Calcular el total y añadir el iva
+      const precioTotal = createPedidoDto.items.reduce((acc, pedidoItem) => {
+        const price = products.find(
+          (product) => product.id_producto === pedidoItem.idProducto,
+        ).precio;
+
+        return acc + price * pedidoItem.cantidad;
+      }, 0);
+
+      const iva = precioTotal*0.15;
+      const precioTotalIva = precioTotal + iva;
+
+
       // 3. Calcular los valores totales del pedido
-      let precioTotalPedido = 0;
-      const detallePedidoData = createPedidoDto.items.map((pedidoItem) => {
-        const product = products.find(p => p.id_producto === pedidoItem.idProducto);
-        const subtotal = product.precio * pedidoItem.cantidad;
-        precioTotalPedido += subtotal;
-        return {
-          precio_unitario: product.precio,
-          id_producto: pedidoItem.idProducto,
-          cantidad: pedidoItem.cantidad,
-          subtotal,
-        };
-      });
-  
+
+   
+
       // Calcular la cantidad total de productos
-      const cantidadTotalPedido = createPedidoDto.items.reduce((acc, item) => acc + item.cantidad, 0);
-  
+      const cantidadTotal = createPedidoDto.items.reduce(
+        (acc, item) => acc + item.cantidad,
+        0,
+      );
+
       // 4. Crear la transacción en la base de datos
       const pedido = await this.prisma.pedidos.create({
         data: {
           id_usuario: 1,
           fecha_pedido: new Date(),
           estado: 'PENDIENTE',
-          precioTotalPedido,
-          cantidadTotalPedido,
+          precioTotalPedido:precioTotalIva,
+          cantidadTotalPedido: cantidadTotal,
           detalle_pedido: {
             createMany: {
-              data: detallePedidoData,
+              data: createPedidoDto.items.map((pedidoItem)=>({
+                precio_unitario: products.find(
+                  (product) => product.id_producto === pedidoItem.idProducto,
+                ).precio,
+                id_producto:pedidoItem.idProducto,
+                cantidad: pedidoItem.cantidad,
+                subtotal: products.find(
+                  (product) => product.id_producto === pedidoItem.idProducto,
+                ).precio * pedidoItem.cantidad,
+              })),
             },
           },
         },
         include: {
-          detalle_pedido: true,
+          detalle_pedido: {
+            select: {
+              id_producto: true,
+              cantidad: true,
+              precio_unitario: true,
+              subtotal: true
+            }
+          }
         },
       });
-  
-      // 5. Retornar el pedido con detalles de producto
+
+      // 5. Retornar el pedido con detalles y nombre producto
       return {
         ...pedido,
         detalle_pedido: pedido.detalle_pedido.map((detalle) => ({
           ...detalle,
-          nombre: products.find((p) => p.id_producto === detalle.id_producto)?.nombre,
+          nombre: products.find((producto) => producto.id_producto === detalle.id_producto)
+            ?.nombre,
         })),
       };
     } catch (error) {
@@ -96,8 +119,8 @@ export class PedidosService {
   async findOne(id: number) {
     try {
       return await this.prisma.pedidos.findUnique({
-        where: {id_pedido: id}
-      })
+        where: { id_pedido: id },
+      });
     } catch (error) {
       throw new Error(`Error, no se encontro el carrito: ${error.message}`);
     }
@@ -110,8 +133,8 @@ export class PedidosService {
   remove(id: number) {
     try {
       return this.prisma.pedidos.delete({
-        where: {id_pedido: id}
-      })
+        where: { id_pedido: id },
+      });
     } catch (error) {
       throw new Error(`Error, no se pudo eliminar el pedido: ${error.message}`);
     }

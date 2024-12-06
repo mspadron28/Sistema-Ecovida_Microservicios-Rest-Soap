@@ -24,6 +24,7 @@ export class ProductosController {
   create(@Body() createProductoDto: CreateProductoDto) {
     return 
   }*/
+  //Se añade autenticacion
   @UseGuards(AuthGuard, RoleGuard)
   @Get('all')
   @Roles(Role.GESTOR_PRODUCTOS)
