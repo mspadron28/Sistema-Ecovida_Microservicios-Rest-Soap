@@ -1,65 +1,116 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
-using System.Net.Http;
-using System.Threading.Tasks;
-using Newtonsoft.Json;
+using System.Text;
+using NATS.Client;
 
 namespace soap_productos
 {
-    public class Service1 : IService1
+    public class Service1 : IService1, IDisposable
     {
-        private readonly HttpClient _httpClient;
+        private readonly IConnection _natsConnection;
 
         public Service1()
         {
-            _httpClient = new HttpClient
+            try
             {
-                BaseAddress = new Uri("http://localhost:3000/productos/") // URL del microservicio de productos
-            };
+                Log("Inicializando conexión a NATS...");
+                var options = ConnectionFactory.GetDefaultOptions();
+                _natsConnection = new ConnectionFactory().CreateConnection("nats://localhost:4222");
+                Log("Conexión a NATS establecida.");
+            }
+            catch (Exception ex)
+            {
+                Log($"Error al inicializar la conexión a NATS: {ex.Message}");
+                throw;
+            }
         }
 
-        public async Task<List<Product>> GetAllProducts()
+        public List<Product> GetAllProducts()
         {
-            var response = await _httpClient.GetAsync("");
-            response.EnsureSuccessStatusCode();
-
-            var jsonResponse = await response.Content.ReadAsStringAsync();
-            return JsonConvert.DeserializeObject<List<Product>>(jsonResponse);
+            Log("Invocando GetAllProducts...");
+            return RequestAndDeserialize<List<Product>>("findAllProductos", null, "Error al obtener todos los productos");
         }
 
-        public async Task<Product> GetProductById(int id)
+        public Product GetProductById(int id)
         {
-            var response = await _httpClient.GetAsync($"{id}");
-            response.EnsureSuccessStatusCode();
+            if (id <= 0)
+            {
+                throw new ArgumentException("El ID del producto debe ser mayor que cero.");
+            }
 
-            var jsonResponse = await response.Content.ReadAsStringAsync();
-            return JsonConvert.DeserializeObject<Product>(jsonResponse);
+            Log($"Invocando GetProductById con ID: {id}");
+            var requestPayload = SerializeToJson(id);
+            return RequestAndDeserialize<Product>("findOneProducto", requestPayload, $"Error al obtener el producto con ID {id}");
         }
 
-        public async Task<List<ProductStock>> GetAllProductsWithStock()
+        public List<ProductStock> GetProductsWithStock()
         {
-            var response = await _httpClient.GetAsync("stock");
-            response.EnsureSuccessStatusCode();
-
-            var jsonResponse = await response.Content.ReadAsStringAsync();
-            return JsonConvert.DeserializeObject<List<ProductStock>>(jsonResponse);
+            Log("Invocando GetProductsWithStock...");
+            return RequestAndDeserialize<List<ProductStock>>("findAllProductosStock", null, "Error al obtener productos con stock");
         }
-    }
 
-    public class Product
-    {
-        public int Id { get; set; }
-        public string Nombre { get; set; }
-        public string Descripcion { get; set; }
-        public decimal Precio { get; set; }
-        public int Stock { get; set; }
-        public string ImagenUrl { get; set; }
-        public bool Activo { get; set; }
-    }
+        public List<Product> ValidateProducts(List<int> ids)
+        {
+            if (ids == null || ids.Count == 0)
+            {
+                throw new ArgumentException("La lista de IDs no puede estar vacía.");
+            }
 
-    public class ProductStock
-    {
-        public string Nombre { get; set; }
-        public int Stock { get; set; }
+            Log($"Invocando ValidateProducts con IDs: {string.Join(", ", ids)}");
+            var requestPayload = SerializeToJson(ids);
+            return RequestAndDeserialize<List<Product>>("validate_productos", requestPayload, "Error al validar los productos");
+        }
+
+        private T RequestAndDeserialize<T>(string topic, byte[] requestPayload, string errorMessage)
+        {
+            try
+            {
+                Log($"Enviando solicitud al tema NATS: {topic}");
+                if (requestPayload != null)
+                {
+                    Log($"Payload enviado: {Encoding.UTF8.GetString(requestPayload)}");
+                }
+
+                var message = _natsConnection.Request(topic, requestPayload);
+                var jsonString = Encoding.UTF8.GetString(message.Data);
+                Log($"Respuesta JSON del tema {topic}: {jsonString}");
+
+                if (string.IsNullOrEmpty(jsonString))
+                {
+                    throw new Exception("La respuesta del microservicio está vacía.");
+                }
+
+                return JsonConvert.DeserializeObject<T>(jsonString);
+            }
+            catch (JsonSerializationException ex)
+            {
+                Log($"Error de deserialización JSON: {ex.Message}");
+                throw new Exception($"{errorMessage}: Respuesta inválida.");
+            }
+            catch (Exception ex)
+            {
+                Log($"Error: {errorMessage} - {ex.Message}");
+                throw new Exception($"{errorMessage}: {ex.Message}");
+            }
+        }
+
+        private byte[] SerializeToJson<T>(T obj)
+        {
+            var jsonString = JsonConvert.SerializeObject(obj);
+            Log($"Serializando objeto a JSON: {jsonString}");
+            return Encoding.UTF8.GetBytes(jsonString);
+        }
+
+        private void Log(string message)
+        {
+            Console.WriteLine($"[{DateTime.Now}] {message}");
+        }
+
+        public void Dispose()
+        {
+            Log("Liberando recursos...");
+            _natsConnection?.Dispose();
+        }
     }
 }

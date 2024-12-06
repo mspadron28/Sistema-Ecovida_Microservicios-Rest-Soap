@@ -1,9 +1,9 @@
 {
   "ExpandedNodes": [
     "",
-    "\\ms-productos\\src\\modules",
-    "\\ms-productos\\src\\modules\\productos"
+    "\\soap-productos",
+    "\\soap-productos\\soap-productos"
   ],
-  "SelectedNode": "\\soap-productos",
+  "SelectedNode": "\\soap-productos\\soap-productos\\Service1.svc.cs",
   "PreviewInSolutionExplorer": false
 }
