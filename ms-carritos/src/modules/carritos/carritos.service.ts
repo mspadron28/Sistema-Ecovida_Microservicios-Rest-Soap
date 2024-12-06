@@ -5,6 +5,7 @@ import { PrismaService } from '../prisma/prisma.service';
 import { NATS_SERVICE } from 'src/config';
 import { ClientProxy, RpcException } from '@nestjs/microservices';
 import { firstValueFrom } from 'rxjs';
+import { CarritoDetalleDto } from './dto';
 
 @Injectable()
 export class CarritosService {
@@ -13,8 +14,16 @@ export class CarritosService {
     @Inject(NATS_SERVICE) private readonly client: ClientProxy,
   ) {}
 
-  async create(createCarritoDto: CreateCarritoDto) {
+  /*async create(createCarritoDto: CreateCarritoDto,idUser:string) {
     const logger = new Logger('VALIDACION');
+    logger.log('Payload recibido:', createCarritoDto);
+    if (!createCarritoDto || !Array.isArray(createCarritoDto.items)) {
+      logger.error('El payload no contiene un arreglo válido en "items"');
+      throw new RpcException({
+        status: HttpStatus.BAD_REQUEST,
+        message: '"items" debe ser un arreglo válido.',
+      });
+    }
     try {
       // 1. Confirmar los ids de los productos
       const productIds = createCarritoDto.items.map((item) => item.idProducto);
@@ -49,7 +58,7 @@ export class CarritosService {
       // 3. Crear la transacción de base de datos
       const carrito = await this.prisma.carrito.create({
         data: {
-          id_usuario: 1,
+          id_usuario: idUser,
           precioTotal: precioTotal,
           cantidadTotal: cantidadTotal,
           carrito_detalle: {
@@ -87,6 +96,99 @@ export class CarritosService {
         })),
       };
     } catch (error) {
+      
+      logger.error('Error al crear el carrito', error.stack);
+      throw new RpcException({
+        status: HttpStatus.BAD_REQUEST,
+        message: error.message || 'Error al crear el carrito',
+      });
+    }
+  }
+*/
+  async create(items: CarritoDetalleDto[], idUser: string) {
+    const logger = new Logger('VALIDACION');
+    logger.log('Payload recibido:', items);
+
+    if (!Array.isArray(items)) {
+      logger.error('El payload no contiene un arreglo válido en "items"');
+      throw new RpcException({
+        status: HttpStatus.BAD_REQUEST,
+        message: '"items" debe ser un arreglo válido.',
+      });
+    }
+
+    try {
+      // 1. Confirmar los ids de los productos
+      const productIds = items.map((item) => item.idProducto);
+      const products: any[] = await firstValueFrom(
+        this.client.send('validate_productos', productIds),
+      );
+      // 1.1 Disminuir stock en productos
+      for (const item of items) {
+        await firstValueFrom(
+          this.client.send('actualizar_stock', {
+            idProducto: item.idProducto,
+            cantidad: item.cantidad,
+          }),
+        );
+      }
+
+      // 2. Calcular los valores totales del carrito
+      const precioTotal = items.reduce((acc, carritoItem) => {
+        const price = products.find(
+          (product) => product.id_producto === carritoItem.idProducto,
+        ).precio;
+
+        return acc + price * carritoItem.cantidad;
+      }, 0);
+      // Obtener todos los productos
+      const cantidadTotal = items.reduce(
+        (acc, carritoItem) => acc + carritoItem.cantidad,
+        0,
+      );
+
+      // 3. Crear la transacción de base de datos
+      const carrito = await this.prisma.carrito.create({
+        data: {
+          id_usuario: idUser,
+          precioTotal: precioTotal,
+          cantidadTotal: cantidadTotal,
+          carrito_detalle: {
+            createMany: {
+              data: items.map((carritoItem) => ({
+                precio_unitario: products.find(
+                  (product) => product.id_producto === carritoItem.idProducto,
+                ).precio,
+                id_producto: carritoItem.idProducto,
+                cantidad: carritoItem.cantidad,
+              })),
+            },
+          },
+        },
+        include: {
+          carrito_detalle: {
+            select: {
+              id_detalle: true,
+              precio_unitario: true,
+              cantidad: true,
+              id_producto: true,
+            },
+          },
+        },
+      });
+
+      // 4. Retornar el carrito con detalles, incluyendo nombres de los productos
+      return {
+        ...carrito,
+        carrito_detalle: carrito.carrito_detalle.map((detalle) => ({
+          ...detalle,
+          nombre: products.find(
+            (product) => product.id_producto === detalle.id_producto,
+          ).nombre,
+        })),
+      };
+    } catch (error) {
+      logger.error('Error al crear el carrito', error.stack);
       throw new RpcException({
         status: HttpStatus.BAD_REQUEST,
         message: error.message || 'Error al crear el carrito',

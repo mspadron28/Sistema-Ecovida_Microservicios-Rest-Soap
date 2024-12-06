@@ -1,19 +1,32 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Inject } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Inject, UseGuards } from '@nestjs/common';
 
 import { CreateCarritoDto } from './dto/create-carrito.dto';
 
-import { ClientProxy, Payload } from '@nestjs/microservices';
+import { ClientProxy, Payload, RpcException } from '@nestjs/microservices';
 import { NATS_SERVICE } from 'src/config';
+import { AuthGuard, RoleGuard } from '../auth/guards';
+import { User } from '../auth/decorators';
+import { CurrentUser } from '../auth/interfaces/current-user.interface';
+import { Roles } from '../auth/decorators/roles.decorator';
+import { Role } from '../auth/lib/roles.enum';
+import { catchError } from 'rxjs';
 
 @Controller('carritos')
 export class CarritosController {
   constructor(
     @Inject(NATS_SERVICE) private readonly client: ClientProxy,
   ) {}
-
-  @Post()
-  create(@Payload() createCarritoDto: CreateCarritoDto) {
-    return this.client.send('createCarrito', createCarritoDto);
+  //Crear carrito + detalle
+  @UseGuards(AuthGuard, RoleGuard)
+  @Roles(Role.GESTOR_PEDIDOS)
+  @Post('crear')
+  create(@Payload() createCarritoDto: CreateCarritoDto, @User('id') idUser: string) {
+    return this.client.send('createCarrito', { ...createCarritoDto, idUser })
+    .pipe(
+      catchError(error=>{
+        throw new RpcException(error)
+      })
+    );
   }
 
   @Get()

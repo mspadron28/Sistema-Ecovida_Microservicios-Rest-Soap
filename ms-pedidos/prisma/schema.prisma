@@ -15,7 +15,7 @@ enum PedidoStatus {
 
 model pedidos {
   id_pedido           Int              @id @default(autoincrement())
-  id_usuario          Int
+  id_usuario          String
   fecha_pedido        DateTime?        @default(now()) @db.Timestamp(6)
   estado              String           @default("PENDIENTE")
   precioTotalPedido   Decimal          @db.Decimal(10, 2)

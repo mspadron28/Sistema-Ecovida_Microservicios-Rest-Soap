@@ -9,8 +9,10 @@ export class CarritosController {
   constructor(private readonly carritosService: CarritosService) {}
 
   @MessagePattern('createCarrito')
-  create(@Payload() createCarritoDto: CreateCarritoDto) {
-    return this.carritosService.create(createCarritoDto);
+  create(@Payload() data: any) {
+    console.log('Payload recibido:', data);
+    const { items, idUser } = data;
+    return this.carritosService.create(items,idUser);
   }
 
   @MessagePattern('findAllCarritos')

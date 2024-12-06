@@ -9,7 +9,7 @@ datasource db {
 
 model carrito {
   id_carrito      Int               @id @default(autoincrement())
-  id_usuario      Int
+  id_usuario      String
   precioTotal     Float
   cantidadTotal   Int
   carrito_detalle carrito_detalle[]
