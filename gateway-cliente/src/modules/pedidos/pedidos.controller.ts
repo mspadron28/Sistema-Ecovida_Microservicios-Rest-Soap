@@ -1,4 +1,4 @@
-import { Controller, Inject, Logger, Post, UseGuards } from '@nestjs/common';
+import { Controller,Get, Inject, Param, ParseIntPipe, Post, UseGuards } from '@nestjs/common';
 import { ClientProxy, Payload, RpcException } from '@nestjs/microservices';
 import { NATS_SERVICE } from 'src/config';
 import { CreatePedidoDto } from './dto';
@@ -29,4 +29,23 @@ export class PedidosController {
       })
     );
   }
+
+    //Obtener todos los pedidos + detalle
+    @UseGuards(AuthGuard, RoleGuard)
+    @Roles(Role.GESTOR_PEDIDOS) 
+    @Get()
+    findAll() {
+      return this.client.send('findAllPedidos',{})
+    }
+  
+    //Obtener un pedido + detalle
+    @UseGuards(AuthGuard, RoleGuard)
+    @Roles(Role.GESTOR_PEDIDOS)
+    @Get(':id')
+    findOne(@Param('id',ParseIntPipe) id: number) {
+      return this.client.send('findOnePedido',id)
+    }
+
+
+
 }

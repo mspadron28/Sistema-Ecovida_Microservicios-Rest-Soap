@@ -8,7 +8,7 @@ import { CreateCarritoDto } from './dto';
 @Controller()
 export class CarritosController {
   constructor(private readonly carritosService: CarritosService) {}
-
+  //Crear carrito + detalle
   @MessagePattern('createCarrito')
   create(@Payload() data: CreateCarritoDto) {
     const { items, idUser } = data;
@@ -25,13 +25,4 @@ export class CarritosController {
     return this.carritosService.findOne(id);
   }
 
-  @MessagePattern('updateCarrito')
-  update(@Payload() updateCarritoDto: UpdateCarritoDto) {
-    return this.carritosService.update(updateCarritoDto.id, updateCarritoDto);
-  }
-
-  @MessagePattern('removeCarrito')
-  remove(@Payload() id: number) {
-    return this.carritosService.remove(id);
-  }
 }

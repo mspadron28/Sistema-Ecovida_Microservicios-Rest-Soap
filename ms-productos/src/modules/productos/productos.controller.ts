@@ -8,6 +8,12 @@ import { UpdateProductoDto } from './dto/update-producto.dto';
 export class ProductosController {
   constructor(private readonly productosService: ProductosService) {}
 
+   // Obtener productos con stock bajo
+   @MessagePattern('findLowStockProducts')
+   findLowStockProducts(@Payload() minStock: number ) {
+     return this.productosService.findLowStockProducts(minStock);
+   }
+
   //Validar los ids mediante un arreglo de ellos
   @MessagePattern('validate_productos')
   validateProduct(@Payload() ids: number[]){
@@ -19,37 +25,39 @@ export class ProductosController {
     return this.productosService.updateProductStock(data);
   }
 
-
+  // Crear un producto
   @MessagePattern('createProducto')
   create(@Payload() createProductoDto: CreateProductoDto) {
     return this.productosService.create(createProductoDto);
   }
-
+  // Obtener todos los productos
   @MessagePattern('findAllProductos')
   findAll() {
     return this.productosService.findAll();
   }
-
+  // Obtener todos los productos con su stock
   @MessagePattern('findAllProductosStock')
   findAllProductsWithStock() {
     return this.productosService.findAllProductsWithStock();
   }
-
-  @MessagePattern('findOneProducto')
+  // Obtener un producto
+  @MessagePattern('findOneProduct')
   findOne(@Payload() id: number) {
     return this.productosService.findOne(id);
   }
 
-  @MessagePattern('updateProducto')
-  update(@Payload() updateProductoDto: UpdateProductoDto) {
-    return this.productosService.update(
-      updateProductoDto.id,
-      updateProductoDto,
-    );
+  // Obtener un producto con stock
+  @MessagePattern('findOneProductByStock')
+  findOneByStock(@Payload() id: number) {
+    return this.productosService.findOneByStock(id);
   }
 
-  @MessagePattern('removeProducto')
-  remove(@Payload() id: number) {
-    return this.productosService.remove(id);
+  // Actualizar el estado de un producto
+  @MessagePattern('actualizarStatusProducto')
+  updateProductStatus(@Payload() updateProductoDto: UpdateProductoDto) {
+    return this.productosService.updateProductStatus(updateProductoDto);
   }
+  
+
+
 }

@@ -119,21 +119,98 @@ export class PedidosService {
 
   async findAll() {
     try {
-      return await this.prisma.pedidos.findMany();
+      // 1. Obtener todos los pedidos con sus detalles
+      const pedidos = await this.prisma.pedidos.findMany({
+        include: {
+          detalle_pedido: {
+            select: {
+              id_producto: true,
+              cantidad: true,
+              precio_unitario: true,
+              subtotal: true,
+            },
+          },
+        },
+      });
+  
+      if (!pedidos.length) {
+        throw new Error('No existen pedidos.');
+      }
+  
+      // 2. Obtener los IDs de los productos relacionados
+      const productIds = pedidos.flatMap((pedido) =>
+        pedido.detalle_pedido.map((detalle) => detalle.id_producto),
+      );
+  
+      // 3. Consultar información de los productos (nombres)
+      const products = await firstValueFrom(
+        this.client.send('validate_productos', productIds),
+      );
+  
+      // 4. Reemplazar id_producto por nombre en los detalles del pedido
+      const pedidosConNombres = pedidos.map((pedido) => ({
+        ...pedido,
+        detalle_pedido: pedido.detalle_pedido.map((detalle) => ({
+          ...detalle,
+          nombre: products.find(
+            (product) => product.id_producto === detalle.id_producto,
+          )?.nombre,
+        })),
+      }));
+  
+      return pedidosConNombres;
     } catch (error) {
-      throw new Error(`Error, no existen pedidos: ${error.message}`);
+      throw new Error(`Error al obtener los pedidos: ${error.message}`);
     }
   }
+  
 
   async findOne(id: number) {
     try {
-      return await this.prisma.pedidos.findUnique({
+      // 1. Buscar el pedido con sus detalles
+      const pedido = await this.prisma.pedidos.findUnique({
         where: { id_pedido: id },
+        include: {
+          detalle_pedido: {
+            select: {
+              id_producto: true,
+              cantidad: true,
+              precio_unitario: true,
+              subtotal: true,
+            },
+          },
+        },
       });
+  
+      if (!pedido) {
+        throw new Error('Pedido no encontrado.');
+      }
+  
+      // 2. Obtener los IDs de los productos del pedido
+      const productIds = pedido.detalle_pedido.map((detalle) => detalle.id_producto);
+  
+      // 3. Consultar los nombres de los productos relacionados
+      const products = await firstValueFrom(
+        this.client.send('validate_productos', productIds),
+      );
+  
+      // 4. Mapear los detalles para incluir los nombres de los productos
+      const pedidoConNombre = {
+        ...pedido,
+        detalle_pedido: pedido.detalle_pedido.map((detalle) => ({
+          ...detalle,
+          nombre: products.find(
+            (product) => product.id_producto === detalle.id_producto,
+          )?.nombre,
+        })),
+      };
+  
+      return pedidoConNombre;
     } catch (error) {
-      throw new Error(`Error, no se encontro el carrito: ${error.message}`);
+      throw new Error(`Error al buscar el pedido: ${error.message}`);
     }
   }
+  
 
   update(id: number, updatePedidoDto: UpdatePedidoDto) {
     return `This action updates a #${id} pedido`;

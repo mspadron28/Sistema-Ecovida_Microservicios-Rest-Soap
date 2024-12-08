@@ -122,16 +122,7 @@ export class CarritosService {
       const products: any[] = await firstValueFrom(
         this.client.send('validate_productos', productIds),
       );
-      // 1.1 Disminuir stock en productos
-      for (const item of items) {
-        await firstValueFrom(
-          this.client.send('actualizar_stock', {
-            idProducto: item.idProducto,
-            cantidad: item.cantidad,
-          }),
-        );
-      }
-
+   
       // 2. Calcular los valores totales del carrito
       const precioTotal = items.reduce((acc, carritoItem) => {
         const price = products.find(
@@ -197,35 +188,93 @@ export class CarritosService {
 
   async findAll() {
     try {
-      return await this.prisma.carrito.findMany();
+      // 1. Obtener todos los carritos con sus detalles
+      const carritos = await this.prisma.carrito.findMany({
+        include: {
+          carrito_detalle: {
+            select: {
+              id_producto: true,
+              cantidad: true,
+              precio_unitario: true,
+            },
+          },
+        },
+      });
+
+      if (!carritos.length) {
+        throw new Error('No existen carritos.');
+      }
+
+      // 2. Obtener los ids de los productos relacionados
+      const productIds = carritos.flatMap((carrito) =>
+        carrito.carrito_detalle.map((detalle) => detalle.id_producto),
+      );
+
+      // 3. Consultar información de los productos (nombres)
+      const products = await firstValueFrom(
+        this.client.send('validate_productos', productIds),
+      );
+
+      // 4. Reemplazar id_producto por nombre en los detalles del carrito
+      const carritosConNombres = carritos.map((carrito) => ({
+        ...carrito,
+        carrito_detalle: carrito.carrito_detalle.map((detalle) => ({
+          ...detalle,
+          nombre: products.find(
+            (product) => product.id_producto === detalle.id_producto,
+          )?.nombre,
+        })),
+      }));
+
+      return carritosConNombres;
     } catch (error) {
-      throw new Error(`Error, no existen carritos: ${error.message}`);
+      throw new Error(`Error al obtener los carritos: ${error.message}`);
     }
   }
 
   async findOne(id: number) {
     try {
-      return await this.prisma.carrito.findUnique({
+      // 1. Buscar el carrito con sus detalles
+      const carrito = await this.prisma.carrito.findUnique({
         where: { id_carrito: id },
+        include: {
+          carrito_detalle: {
+            select: {
+              id_producto: true,
+              cantidad: true,
+              precio_unitario: true,
+            },
+          },
+        },
       });
-    } catch (error) {
-      throw new Error(`Error, no se encontro el carrito: ${error.message}`);
-    }
-  }
-
-  update(id: number, updateCarritoDto: UpdateCarritoDto) {
-    return `This action updates a #${id} carrito`;
-  }
-
-  remove(id: number) {
-    try {
-      return this.prisma.carrito.delete({
-        where: { id_carrito: id },
-      });
-    } catch (error) {
-      throw new Error(
-        `Error, no se pudo eliminar el carrito: ${error.message}`,
+  
+      if (!carrito) {
+        throw new Error('Carrito no encontrado.');
+      }
+  
+      // 2. Obtener los IDs de los productos del carrito
+      const productIds = carrito.carrito_detalle.map((detalle) => detalle.id_producto);
+  
+      // 3. Consultar los nombres de los productos relacionados
+      const products = await firstValueFrom(
+        this.client.send('validate_productos', productIds),
       );
+  
+      // 4. Mapear los detalles para incluir los nombres de los productos
+      const carritoConNombre = {
+        ...carrito,
+        carrito_detalle: carrito.carrito_detalle.map((detalle) => ({
+          ...detalle,
+          nombre: products.find(
+            (product) => product.id_producto === detalle.id_producto,
+          )?.nombre,
+        })),
+      };
+  
+      return carritoConNombre;
+    } catch (error) {
+      throw new Error(`Error al buscar el carrito: ${error.message}`);
     }
   }
+  
 }

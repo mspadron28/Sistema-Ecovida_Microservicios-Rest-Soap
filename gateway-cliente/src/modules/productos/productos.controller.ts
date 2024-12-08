@@ -8,50 +8,86 @@ import {
   Delete,
   Inject,
   UseGuards,
+  ParseIntPipe,
 } from '@nestjs/common';
 
-import { ClientProxy } from '@nestjs/microservices';
+import { ClientProxy, RpcException } from '@nestjs/microservices';
 import { NATS_SERVICE } from 'src/config';
 import { Roles } from '../auth/decorators/roles.decorator';
-import { AuthGuard } from '../auth/guards'; 
-import { RoleGuard } from '../auth/guards'; 
+import { AuthGuard } from '../auth/guards';
+import { RoleGuard } from '../auth/guards';
 import { Role } from '../auth/lib/roles.enum';
+import { CreateProductoDto } from './dto/create-producto.dto';
+import { UpdateProductoDto } from './dto/update-producto.dto';
+import { catchError } from 'rxjs';
 @Controller('productos')
 export class ProductosController {
   constructor(@Inject(NATS_SERVICE) private readonly client: ClientProxy) {}
-  /*
-  @Post()
+
+  @Post() //Crear un producto
   create(@Body() createProductoDto: CreateProductoDto) {
-    return 
-  }*/
+    return this.client.send('createProducto', createProductoDto).pipe(
+      catchError((error) => {
+        throw new RpcException(error);
+      }),
+    );
+  }
+
   //Se añade autenticacion
   @UseGuards(AuthGuard, RoleGuard)
-  @Get('all')
+  @Get() //Obtener todos los productos
   @Roles(Role.GESTOR_PRODUCTOS)
   findAll() {
-    return this.client.send('findAllProductos', {});
+    return this.client.send('findAllProductos', {}).pipe(
+      catchError((error) => {
+        throw new RpcException(error);
+      }),
+    );
   }
 
   @Get('stock')
-  findAllProductosStock() {
-    return this.client.send('findAllProductosStock', {});
+  findAllProductosStock() { //Obtener todos los productos con stock
+    return this.client.send('findAllProductosStock', {}).pipe(
+      catchError((error) => {
+        throw new RpcException(error);
+      }),
+    );
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return;
+  @Get(':id') //Obtener un producto
+  findOne(@Param('id', ParseIntPipe) id: number) {
+    return this.client.send('findOneProduct', id).pipe(
+      catchError((error) => {
+        throw new RpcException(error);
+      }),
+    );
   }
-  /*
-  @Patch(':id')
-  update(
-    @Param('id') id: string,
-    @Body() updateProductoDto: UpdateProductoDto,
-  ) {
-    return;
-  }*/
+  @Get('stock/:id') //Obtener un producto
+  findOneByStock(@Param('id', ParseIntPipe) id: number) {
+    return this.client.send('findOneProductByStock', id).pipe(
+      catchError((error) => {
+        throw new RpcException(error);
+      }),
+    );
+  }
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return;
+  @Patch() //Actualizar un producto
+  update(@Body() updateProductoDto: UpdateProductoDto) {
+    return this.client.send('actualizarStatusProducto', updateProductoDto).pipe(
+      catchError((error) => {
+        throw new RpcException(error);
+      }),
+    );
   }
+
+  @Post('stock-minimo') //Obtener productos con stock bajo
+  findLowStockProducts(@Body() body: { minStock: number }) {
+    return this.client.send('findLowStockProducts', body.minStock).pipe(
+      catchError((error) => {
+        throw new RpcException(error);
+      }),
+    );
+  }
+
+  
 }
