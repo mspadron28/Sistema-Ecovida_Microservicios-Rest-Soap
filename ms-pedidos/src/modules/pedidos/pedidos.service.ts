@@ -5,6 +5,7 @@ import { PrismaService } from '../prisma/prisma.service';
 import { NATS_SERVICE } from 'src/config';
 import { ClientProxy, RpcException } from '@nestjs/microservices';
 import { firstValueFrom } from 'rxjs';
+import { PedidoDetalleDto } from './dto';
 
 @Injectable()
 export class PedidosService {
@@ -13,17 +14,25 @@ export class PedidosService {
     @Inject(NATS_SERVICE) private readonly client: ClientProxy,
   ) {}
 
-  async create(createPedidoDto: CreatePedidoDto) {
-    const logger = new Logger('PEDIDOS');
+  async create(items: PedidoDetalleDto[], idUser: string) {
+    const logger = new Logger('Create-Pedidos+Detalle');
+
+    if (!Array.isArray(items)) {
+      logger.error('El payload no contiene un arreglo válido en "items"');
+      throw new RpcException({
+        status: HttpStatus.BAD_REQUEST,
+        message: '"items" debe ser un arreglo válido.',
+      });
+    }
     try {
       // 1. Validar los IDs de los productos
-      const productIds = createPedidoDto.items.map((item) => item.idProducto);
+      const productIds = items.map((item) => item.idProducto);
       const products: any[] = await firstValueFrom(
         this.client.send('validate_productos', productIds),
       );
 
       // 2. Actualizar stock en productos
-      for (const item of createPedidoDto.items) {
+      for (const item of items) {
         await firstValueFrom(
           this.client.send('actualizar_stock', {
             idProducto: item.idProducto,
@@ -33,7 +42,7 @@ export class PedidosService {
       }
 
       // 2. Calcular el total y añadir el iva
-      const precioTotal = createPedidoDto.items.reduce((acc, pedidoItem) => {
+      const precioTotal = items.reduce((acc, pedidoItem) => {
         const price = products.find(
           (product) => product.id_producto === pedidoItem.idProducto,
         ).precio;
@@ -50,7 +59,7 @@ export class PedidosService {
    
 
       // Calcular la cantidad total de productos
-      const cantidadTotal = createPedidoDto.items.reduce(
+      const cantidadTotal = items.reduce(
         (acc, item) => acc + item.cantidad,
         0,
       );
@@ -58,14 +67,14 @@ export class PedidosService {
       // 4. Crear la transacción en la base de datos
       const pedido = await this.prisma.pedidos.create({
         data: {
-          id_usuario: 1,
+          id_usuario: idUser,
           fecha_pedido: new Date(),
           estado: 'PENDIENTE',
           precioTotalPedido:precioTotalIva,
           cantidadTotalPedido: cantidadTotal,
           detalle_pedido: {
             createMany: {
-              data: createPedidoDto.items.map((pedidoItem)=>({
+              data: items.map((pedidoItem)=>({
                 precio_unitario: products.find(
                   (product) => product.id_producto === pedidoItem.idProducto,
                 ).precio,

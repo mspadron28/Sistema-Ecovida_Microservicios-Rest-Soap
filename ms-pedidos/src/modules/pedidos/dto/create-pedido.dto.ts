@@ -1,4 +1,4 @@
-import { ArrayMinSize, IsArray, ValidateNested } from 'class-validator';
+import { ArrayMinSize, IsArray, IsNotEmpty, IsString, ValidateNested } from 'class-validator';
 import { Type } from 'class-transformer';
 import { PedidoDetalleDto } from './pedido-detalle.dto';
 
@@ -8,4 +8,8 @@ export class CreatePedidoDto {
     @ValidateNested({each:true})
     @Type(() => PedidoDetalleDto)
     items: PedidoDetalleDto[]
+
+    @IsString()
+    @IsNotEmpty({ message: 'El campo "idUser" no debe estar vacío.' })
+    idUser: string;
 }

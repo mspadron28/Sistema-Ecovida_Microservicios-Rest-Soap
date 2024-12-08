@@ -1,16 +1,18 @@
 import { Controller } from '@nestjs/common';
 import { MessagePattern, Payload } from '@nestjs/microservices';
 import { PedidosService } from './pedidos.service';
-import { CreatePedidoDto } from './dto/create-pedido.dto';
 import { UpdatePedidoDto } from './dto/update-pedido.dto';
+
+import { CreatePedidoDto } from './dto';
 
 @Controller()
 export class PedidosController {
   constructor(private readonly pedidosService: PedidosService) {}
 
   @MessagePattern('createPedido')
-  create(@Payload() createPedidoDto: CreatePedidoDto) {
-    return this.pedidosService.create(createPedidoDto);
+  create(@Payload() data: CreatePedidoDto) {
+    const { items, idUser } = data;
+    return this.pedidosService.create(items,idUser);
   }
 
   @MessagePattern('findAllPedidos')

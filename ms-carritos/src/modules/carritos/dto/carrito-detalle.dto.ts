@@ -9,8 +9,8 @@ export class CarritoDetalleDto {
     @IsPositive()
     @IsNumber()
     cantidad: number;
-    
+    /*
     @IsPositive()
     @IsNumber()
-    precioUnitario: number;
+    precioUnitario: number;*/
 }

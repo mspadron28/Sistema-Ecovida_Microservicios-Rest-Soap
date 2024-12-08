@@ -1,5 +1,5 @@
 import { HttpStatus, Inject, Injectable, Logger } from '@nestjs/common';
-import { CreateCarritoDto } from './dto/create-carrito.dto';
+
 import { UpdateCarritoDto } from './dto/update-carrito.dto';
 import { PrismaService } from '../prisma/prisma.service';
 import { NATS_SERVICE } from 'src/config';
@@ -106,8 +106,7 @@ export class CarritosService {
   }
 */
   async create(items: CarritoDetalleDto[], idUser: string) {
-    const logger = new Logger('VALIDACION');
-    logger.log('Payload recibido:', items);
+    const logger = new Logger('Create-Carrito+Detalle');
 
     if (!Array.isArray(items)) {
       logger.error('El payload no contiene un arreglo válido en "items"');

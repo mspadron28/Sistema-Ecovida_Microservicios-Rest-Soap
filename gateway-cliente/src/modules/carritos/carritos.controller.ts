@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Inject, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Inject, UseGuards, Logger } from '@nestjs/common';
 
 import { CreateCarritoDto } from './dto/create-carrito.dto';
 
@@ -16,11 +16,14 @@ export class CarritosController {
   constructor(
     @Inject(NATS_SERVICE) private readonly client: ClientProxy,
   ) {}
+  
   //Crear carrito + detalle
   @UseGuards(AuthGuard, RoleGuard)
   @Roles(Role.GESTOR_PEDIDOS)
   @Post('crear')
   create(@Payload() createCarritoDto: CreateCarritoDto, @User('id') idUser: string) {
+    const logger = new Logger('Revisar payload de dto:');
+    logger.log(`Spread operator ${createCarritoDto}`);
     return this.client.send('createCarrito', { ...createCarritoDto, idUser })
     .pipe(
       catchError(error=>{
