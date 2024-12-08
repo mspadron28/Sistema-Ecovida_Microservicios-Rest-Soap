@@ -6,15 +6,12 @@ client = Client(wsdl_url)
 
 def get_all_products():
     try:
-        # Realiza la llamada al servicio SOAP que interactúa con el Gateway
         response = client.service.GetAllProducts()
         print("Respuesta de GetAllProducts:")
         
-        # Asegúrate de que la respuesta es una lista de productos
         if isinstance(response, list):
             for product in response:
-                # Se asume que la respuesta ya es un objeto de producto
-                print(f"ID: {product.Id}, Nombre: {product.Nombre}, Precio: {product.Precio}, Stock: {product.Stock}, Activo: {product.Status}")
+                print(f"ID: {product['Id']}, Nombre: {product['Nombre']}, Precio: {product['Precio']}, Stock: {product['Stock']}, Activo: {product['Status']}")
         else:
             print("La respuesta no es una lista de productos.")
     except Exception as e:
@@ -22,59 +19,63 @@ def get_all_products():
 
 def get_product_by_id():
     try:
-        # Solicita el ID del producto desde el usuario
         product_id = input("Ingrese el ID del producto: ")
-
-        # Verifica que el ID sea un número entero
+        
         if not product_id.isdigit():
             print("El ID debe ser un número entero.")
             return
         
-        # Convertimos el ID a entero
         product_id = int(product_id)
+        response = client.service.GetProductById(product_id)
         
-        # Realiza la llamada al servicio SOAP para obtener el producto por ID
-        response = client.service.GetProductById(id=product_id)
-        
-        # Asegúrate de que la respuesta es un solo producto
         if response:
-            print(f"ID: {response.Id}, Nombre: {response.Nombre}, Precio: {response.Precio}, Stock: {response.Stock}, Activo: {response.Status}")
+            print(f"ID: {response['Id']}, Nombre: {response['Nombre']}, Precio: {response['Precio']}, Stock: {response['Stock']}, Activo: {response['Status']}")
         else:
             print(f"No se encontró el producto con ID {product_id}.")
     except Exception as e:
         print(f"Error en GetProductById: {e}")
 
-def validate_products():
+def get_products_with_stock():
     try:
-        # Solicita los IDs separados por comas
-        ids_input = input("IDs separados por comas: ")
+        response = client.service.GetProductsWithStock()
+        print("Respuesta de GetProductsWithStock:")
         
-        # Convierte los IDs a una lista de enteros
-        ids = [int(id.strip()) for id in ids_input.split(",")]
-        
-        # Realiza la llamada al servicio SOAP para validar los productos
-        response = client.service.ValidateProducts(ids=ids)
-        
-        # Muestra el resultado de la validación
-        if response:
-            print("Productos validados exitosamente.")
+        if isinstance(response, list):
             for product in response:
-                print(f"ID: {product.Id}, Nombre: {product.Nombre}, Precio: {product.Precio}, Stock: {product.Stock}, Activo: {product.Status}")
+                print(f"ID: {product['Id']}, Nombre: {product['Nombre']}, Stock: {product['Stock']}")
         else:
-            print("No se encontraron productos válidos para los IDs proporcionados.")
-    except ValueError:
-        print("Los IDs deben ser números enteros válidos.")
+            print("La respuesta no es una lista de productos con stock.")
     except Exception as e:
-        print(f"Error en ValidateProducts: {e}")
+        print(f"Error en GetProductsWithStock: {e}")
+
+def find_low_stock_products():
+    try:
+        min_stock = input("Ingrese el stock mínimo: ")
+        
+        if not min_stock.isdigit():
+            print("El stock mínimo debe ser un número entero.")
+            return
+        
+        min_stock = int(min_stock)
+        response = client.service.FindLowStockProducts(min_stock)
+        
+        print("Respuesta de FindLowStockProducts:")
+        if isinstance(response, list):
+            for product in response:
+                print(f"ID: {product['Id']}, Nombre: {product['Nombre']}, Stock: {product['Stock']}")
+        else:
+            print("La respuesta no es una lista de productos.")
+    except Exception as e:
+        print(f"Error en FindLowStockProducts: {e}")
 
 def main():
     while True:
         print("\n1. Obtener todos los productos")
         print("2. Obtener producto por ID")
-        print("3. Validar productos por IDs")
-        print("4. Salir")
+        print("3. Obtener productos con stock")
+        print("4. Buscar productos con bajo stock")
+        print("5. Salir")
         
-        # Solicita al usuario que seleccione una opción
         option = input("Seleccione una opción: ")
         
         if option == "1":
@@ -82,8 +83,10 @@ def main():
         elif option == "2":
             get_product_by_id()
         elif option == "3":
-            validate_products()
+            get_products_with_stock()
         elif option == "4":
+            find_low_stock_products()
+        elif option == "5":
             print("Saliendo...")
             break
         else:

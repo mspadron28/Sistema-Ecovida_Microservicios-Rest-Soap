@@ -10,45 +10,51 @@ namespace soap_productos
     public class Service1 : IService1, IDisposable
     {
         private readonly HttpClient _httpClient;
-        private readonly string _baseUrl = "http://localhost:3000";  // URL base del microservicio de productos
+        private readonly string _baseUrl = "http://localhost:3000/api/productos";  // URL base del gateway-cliente
 
         public Service1()
         {
             _httpClient = new HttpClient();
         }
 
-        public async Task<List<Product>> GetAllProducts()  // Cambiado a Task<List<Product>>
+        // Obtener todos los productos (GET /productos)
+        public async Task<List<Product>> GetAllProducts()
         {
-            return await RequestAndDeserialize<List<Product>>("api/productos/findAll", null, "Error al obtener todos los productos");
+            return await RequestAndDeserialize<List<Product>>("", null, "Error al obtener todos los productos");
         }
 
-        public async Task<Product> GetProductById(int id)  // Cambiado a Task<Product>
+        // Obtener producto por ID (GET /productos/:id)
+        public async Task<Product> GetProductById(int id)
         {
             ValidateId(id);
-            var requestPayload = SerializeToJson(id);
-            return await RequestAndDeserialize<Product>("api/productos/findOne", requestPayload, $"Error al obtener el producto con ID {id}");
+            return await RequestAndDeserialize<Product>($"{id}", null, $"Error al obtener el producto con ID {id}");
         }
 
-        public async Task<List<ProductStock>> GetProductsWithStock()  // Cambiado a Task<List<ProductStock>>
+        // Obtener productos con stock (GET /productos/stock)
+        public async Task<List<Product>> GetProductsWithStock()
         {
-            return await RequestAndDeserialize<List<ProductStock>>("api/productos/findAllStock", null, "Error al obtener productos con stock");
+            return await RequestAndDeserialize<List<Product>>("stock", null, "Error al obtener productos con stock");
         }
 
-        public async Task<List<Product>> ValidateProducts(List<int> ids)  // Cambiado a Task<List<Product>>
+        // Obtener productos con bajo stock (POST /productos/stock-minimo)
+        public async Task<List<Product>> FindLowStockProducts(int minStock)
         {
-            if (ids == null || ids.Count == 0)
-                throw new ArgumentException("La lista de IDs no puede estar vacía.");
+            if (minStock <= 0)
+                throw new ArgumentException("El stock mínimo debe ser mayor a cero.");
 
-            var requestPayload = SerializeToJson(ids);
-            return await RequestAndDeserialize<List<Product>>("api/productos/validate", requestPayload, "Error al validar los productos");
+            var requestPayload = SerializeToJson(new { minStock });
+            return await RequestAndDeserialize<List<Product>>("stock-minimo", requestPayload, "Error al obtener productos con bajo stock");
         }
 
+        // Función para validar el ID
         private void ValidateId(int id)
         {
-            if (id <= 0) throw new ArgumentException("El ID debe ser mayor que cero.");
+            if (id <= 0)
+                throw new ArgumentException("El ID debe ser mayor que cero.");
         }
 
-        private async Task<T> RequestAndDeserialize<T>(string url, byte[] payload, string errorMessage)
+        // Método genérico para realizar solicitudes HTTP y deserializar la respuesta
+        private async Task<T> RequestAndDeserialize<T>(string endpoint, byte[] payload, string errorMessage)
         {
             try
             {
@@ -56,28 +62,25 @@ namespace soap_productos
 
                 if (payload == null)
                 {
-                    // Si no hay payload, hacemos una solicitud GET
-                    response = await _httpClient.GetAsync($"{_baseUrl}/{url}");
+                    // Solicitud GET si no hay payload
+                    response = await _httpClient.GetAsync($"{_baseUrl}/{endpoint}");
                 }
                 else
                 {
-                    // Si hay payload, hacemos una solicitud POST
+                    // Solicitud POST si hay payload
                     var content = new StringContent(Encoding.UTF8.GetString(payload), Encoding.UTF8, "application/json");
-                    response = await _httpClient.PostAsync($"{_baseUrl}/{url}", content);
+                    response = await _httpClient.PostAsync($"{_baseUrl}/{endpoint}", content);
                 }
 
                 if (!response.IsSuccessStatusCode)
-                {
                     throw new Exception($"Error en la solicitud HTTP. Código de estado: {response.StatusCode}");
-                }
 
                 var responseContent = await response.Content.ReadAsStringAsync();
 
                 if (string.IsNullOrWhiteSpace(responseContent))
                     throw new Exception("La respuesta está vacía.");
 
-                Log($"Respuesta recibida: {responseContent}"); // Agregar log para depuración
-
+                Log($"Respuesta recibida: {responseContent}");
                 return JsonConvert.DeserializeObject<T>(responseContent);
             }
             catch (Exception ex)
@@ -87,6 +90,7 @@ namespace soap_productos
             }
         }
 
+        // Método para serializar objetos a JSON
         private byte[] SerializeToJson<T>(T obj)
         {
             try
@@ -100,9 +104,11 @@ namespace soap_productos
             }
         }
 
+        // Métodos de logging
         private void Log(string message) => Console.WriteLine($"[{DateTime.Now}] {message}");
         private void LogError(string message, Exception ex) => Console.WriteLine($"[{DateTime.Now}] ERROR: {message}. Detalles: {ex.Message}");
 
+        // Liberación de recursos
         public void Dispose() => _httpClient?.Dispose();
     }
 }

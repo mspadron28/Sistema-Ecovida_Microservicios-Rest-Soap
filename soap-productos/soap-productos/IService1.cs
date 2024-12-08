@@ -8,19 +8,19 @@ namespace soap_productos
     public interface IService1
     {
         [OperationContract]
-        Task<List<Product>> GetAllProducts();  // Cambiado a Task<List<Product>>
+        Task<List<Product>> GetAllProducts();
 
         [OperationContract]
-        Task<Product> GetProductById(int id);  // Cambiado a Task<Product>
+        Task<Product> GetProductById(int id);
 
         [OperationContract]
-        Task<List<ProductStock>> GetProductsWithStock();  // Cambiado a Task<List<ProductStock>>
+        Task<List<Product>> GetProductsWithStock(); // Retornará lista de productos con stock
 
         [OperationContract]
-        Task<List<Product>> ValidateProducts(List<int> ids);  // Cambiado a Task<List<Product>>
+        Task<List<Product>> FindLowStockProducts(int minStock); // Cambiado para recibir el stock mínimo
     }
 
-    // Clases de datos (ajustadas a la estructura de producto)
+    // Clases de datos ajustadas
     public class Product
     {
         public int Id { get; set; }
@@ -28,12 +28,6 @@ namespace soap_productos
         public decimal Precio { get; set; }
         public int Stock { get; set; }
         public int IdCategoria { get; set; }
-        public bool Status { get; set; } // Cambiado 'Activo' a 'Status'
-    }
-
-    public class ProductStock
-    {
-        public string Nombre { get; set; }
-        public int Stock { get; set; }
+        public bool Status { get; set; }
     }
 }
