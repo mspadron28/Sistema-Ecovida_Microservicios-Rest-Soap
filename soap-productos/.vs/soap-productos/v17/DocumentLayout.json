@@ -3,12 +3,12 @@
   "WorkspaceRootPath": "D:\\Software Seguro\\1er Parcial\\Sistema-Ecovida_Microservicios-Rest-Soap\\soap-productos\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{AB7204AB-D4F1-48D2-8AC7-68550FEAE5A5}|soap-productos\\soap-productos.csproj|d:\\software seguro\\1er parcial\\sistema-ecovida_microservicios-rest-soap\\soap-productos\\soap-productos\\service1.svc.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{AB7204AB-D4F1-48D2-8AC7-68550FEAE5A5}|soap-productos\\soap-productos.csproj|solutionrelative:soap-productos\\service1.svc.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{AB7204AB-D4F1-48D2-8AC7-68550FEAE5A5}|soap-productos\\soap-productos.csproj|D:\\Software Seguro\\1er Parcial\\Sistema-Ecovida_Microservicios-Rest-Soap\\soap-productos\\soap-productos\\iservice1.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{AB7204AB-D4F1-48D2-8AC7-68550FEAE5A5}|soap-productos\\soap-productos.csproj|solutionrelative:soap-productos\\iservice1.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{AB7204AB-D4F1-48D2-8AC7-68550FEAE5A5}|soap-productos\\soap-productos.csproj|D:\\Software Seguro\\1er Parcial\\Sistema-Ecovida_Microservicios-Rest-Soap\\soap-productos\\soap-productos\\IService1.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{AB7204AB-D4F1-48D2-8AC7-68550FEAE5A5}|soap-productos\\soap-productos.csproj|solutionrelative:soap-productos\\IService1.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{AB7204AB-D4F1-48D2-8AC7-68550FEAE5A5}|soap-productos\\soap-productos.csproj|d:\\software seguro\\1er parcial\\sistema-ecovida_microservicios-rest-soap\\soap-productos\\soap-productos\\service1.svc.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{AB7204AB-D4F1-48D2-8AC7-68550FEAE5A5}|soap-productos\\soap-productos.csproj|solutionrelative:soap-productos\\service1.svc.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
   ],
   "DocumentGroupContainers": [
@@ -18,21 +18,8 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 0,
+          "SelectedChildIndex": 7,
           "Children": [
-            {
-              "$type": "Document",
-              "DocumentIndex": 0,
-              "Title": "Service1.svc.cs",
-              "DocumentMoniker": "D:\\Software Seguro\\1er Parcial\\Sistema-Ecovida_Microservicios-Rest-Soap\\soap-productos\\soap-productos\\Service1.svc.cs",
-              "RelativeDocumentMoniker": "soap-productos\\Service1.svc.cs",
-              "ToolTip": "D:\\Software Seguro\\1er Parcial\\Sistema-Ecovida_Microservicios-Rest-Soap\\soap-productos\\soap-productos\\Service1.svc.cs",
-              "RelativeToolTip": "soap-productos\\Service1.svc.cs",
-              "ViewState": "AgIAACIAAAAAAAAAAAAuwFoAAAAgAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-12-06T16:24:56.783Z",
-              "EditorCaption": ""
-            },
             {
               "$type": "Bookmark",
               "Name": "ST:0:0:{b1e99781-ab81-11d0-b683-00aa00a3ee26}"
@@ -54,16 +41,33 @@
               "Name": "ST:0:0:{1c4feeaa-4718-4aa9-859d-94ce25d182ba}"
             },
             {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{34e76e81-ee4a-11d0-ae2e-00a0c90fffc3}"
+            },
+            {
               "$type": "Document",
               "DocumentIndex": 1,
+              "Title": "Service1.svc.cs",
+              "DocumentMoniker": "D:\\Software Seguro\\1er Parcial\\Sistema-Ecovida_Microservicios-Rest-Soap\\soap-productos\\soap-productos\\Service1.svc.cs",
+              "RelativeDocumentMoniker": "soap-productos\\Service1.svc.cs",
+              "ToolTip": "D:\\Software Seguro\\1er Parcial\\Sistema-Ecovida_Microservicios-Rest-Soap\\soap-productos\\soap-productos\\Service1.svc.cs",
+              "RelativeToolTip": "soap-productos\\Service1.svc.cs",
+              "ViewState": "AgIAAD4AAAAAAAAAAAAmwHIAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-12-08T18:38:18.699Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
               "Title": "IService1.cs",
               "DocumentMoniker": "D:\\Software Seguro\\1er Parcial\\Sistema-Ecovida_Microservicios-Rest-Soap\\soap-productos\\soap-productos\\IService1.cs",
               "RelativeDocumentMoniker": "soap-productos\\IService1.cs",
               "ToolTip": "D:\\Software Seguro\\1er Parcial\\Sistema-Ecovida_Microservicios-Rest-Soap\\soap-productos\\soap-productos\\IService1.cs",
               "RelativeToolTip": "soap-productos\\IService1.cs",
-              "ViewState": "AgIAAAsAAAAAAAAAAAAwwCkAAAAAAAAAAAAAAA==",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAACEAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-12-02T03:32:53.31Z",
+              "WhenOpened": "2024-12-08T18:37:22.666Z",
               "EditorCaption": ""
             }
           ]

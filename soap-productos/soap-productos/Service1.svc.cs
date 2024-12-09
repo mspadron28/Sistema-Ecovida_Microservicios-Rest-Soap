@@ -1,116 +1,114 @@
 ﻿using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Net.Http;
 using System.Text;
-using NATS.Client;
+using System.Threading.Tasks;
 
 namespace soap_productos
 {
     public class Service1 : IService1, IDisposable
     {
-        private readonly IConnection _natsConnection;
+        private readonly HttpClient _httpClient;
+        private readonly string _baseUrl = "http://localhost:3000/api/productos";  // URL base del gateway-cliente
 
         public Service1()
         {
-            try
-            {
-                Log("Inicializando conexión a NATS...");
-                var options = ConnectionFactory.GetDefaultOptions();
-                _natsConnection = new ConnectionFactory().CreateConnection("nats://localhost:4222");
-                Log("Conexión a NATS establecida.");
-            }
-            catch (Exception ex)
-            {
-                Log($"Error al inicializar la conexión a NATS: {ex.Message}");
-                throw;
-            }
+            _httpClient = new HttpClient();
         }
 
-        public List<Product> GetAllProducts()
+        // Obtener todos los productos (GET /productos)
+        public async Task<List<Product>> GetAllProducts()
         {
-            Log("Invocando GetAllProducts...");
-            return RequestAndDeserialize<List<Product>>("findAllProductos", null, "Error al obtener todos los productos");
+            return await RequestAndDeserialize<List<Product>>("", null, "Error al obtener todos los productos");
         }
 
-        public Product GetProductById(int id)
+        // Obtener producto por ID (GET /productos/:id)
+        public async Task<Product> GetProductById(int id)
+        {
+            ValidateId(id);
+            return await RequestAndDeserialize<Product>($"{id}", null, $"Error al obtener el producto con ID {id}");
+        }
+
+        // Obtener productos con stock (GET /productos/stock)
+        public async Task<List<Product>> GetProductsWithStock()
+        {
+            return await RequestAndDeserialize<List<Product>>("stock", null, "Error al obtener productos con stock");
+        }
+
+        // Obtener productos con bajo stock (POST /productos/stock-minimo)
+        public async Task<List<Product>> FindLowStockProducts(int minStock)
+        {
+            if (minStock <= 0)
+                throw new ArgumentException("El stock mínimo debe ser mayor a cero.");
+
+            var requestPayload = SerializeToJson(new { minStock });
+            return await RequestAndDeserialize<List<Product>>("stock-minimo", requestPayload, "Error al obtener productos con bajo stock");
+        }
+
+        // Función para validar el ID
+        private void ValidateId(int id)
         {
             if (id <= 0)
-            {
-                throw new ArgumentException("El ID del producto debe ser mayor que cero.");
-            }
-
-            Log($"Invocando GetProductById con ID: {id}");
-            var requestPayload = SerializeToJson(id);
-            return RequestAndDeserialize<Product>("findOneProducto", requestPayload, $"Error al obtener el producto con ID {id}");
+                throw new ArgumentException("El ID debe ser mayor que cero.");
         }
 
-        public List<ProductStock> GetProductsWithStock()
-        {
-            Log("Invocando GetProductsWithStock...");
-            return RequestAndDeserialize<List<ProductStock>>("findAllProductosStock", null, "Error al obtener productos con stock");
-        }
-
-        public List<Product> ValidateProducts(List<int> ids)
-        {
-            if (ids == null || ids.Count == 0)
-            {
-                throw new ArgumentException("La lista de IDs no puede estar vacía.");
-            }
-
-            Log($"Invocando ValidateProducts con IDs: {string.Join(", ", ids)}");
-            var requestPayload = SerializeToJson(ids);
-            return RequestAndDeserialize<List<Product>>("validate_productos", requestPayload, "Error al validar los productos");
-        }
-
-        private T RequestAndDeserialize<T>(string topic, byte[] requestPayload, string errorMessage)
+        // Método genérico para realizar solicitudes HTTP y deserializar la respuesta
+        private async Task<T> RequestAndDeserialize<T>(string endpoint, byte[] payload, string errorMessage)
         {
             try
             {
-                Log($"Enviando solicitud al tema NATS: {topic}");
-                if (requestPayload != null)
+                HttpResponseMessage response = null;
+
+                if (payload == null)
                 {
-                    Log($"Payload enviado: {Encoding.UTF8.GetString(requestPayload)}");
+                    // Solicitud GET si no hay payload
+                    response = await _httpClient.GetAsync($"{_baseUrl}/{endpoint}");
+                }
+                else
+                {
+                    // Solicitud POST si hay payload
+                    var content = new StringContent(Encoding.UTF8.GetString(payload), Encoding.UTF8, "application/json");
+                    response = await _httpClient.PostAsync($"{_baseUrl}/{endpoint}", content);
                 }
 
-                var message = _natsConnection.Request(topic, requestPayload);
-                var jsonString = Encoding.UTF8.GetString(message.Data);
-                Log($"Respuesta JSON del tema {topic}: {jsonString}");
+                if (!response.IsSuccessStatusCode)
+                    throw new Exception($"Error en la solicitud HTTP. Código de estado: {response.StatusCode}");
 
-                if (string.IsNullOrEmpty(jsonString))
-                {
-                    throw new Exception("La respuesta del microservicio está vacía.");
-                }
+                var responseContent = await response.Content.ReadAsStringAsync();
 
-                return JsonConvert.DeserializeObject<T>(jsonString);
-            }
-            catch (JsonSerializationException ex)
-            {
-                Log($"Error de deserialización JSON: {ex.Message}");
-                throw new Exception($"{errorMessage}: Respuesta inválida.");
+                if (string.IsNullOrWhiteSpace(responseContent))
+                    throw new Exception("La respuesta está vacía.");
+
+                Log($"Respuesta recibida: {responseContent}");
+                return JsonConvert.DeserializeObject<T>(responseContent);
             }
             catch (Exception ex)
             {
-                Log($"Error: {errorMessage} - {ex.Message}");
+                LogError(errorMessage, ex);
                 throw new Exception($"{errorMessage}: {ex.Message}");
             }
         }
 
+        // Método para serializar objetos a JSON
         private byte[] SerializeToJson<T>(T obj)
         {
-            var jsonString = JsonConvert.SerializeObject(obj);
-            Log($"Serializando objeto a JSON: {jsonString}");
-            return Encoding.UTF8.GetBytes(jsonString);
+            try
+            {
+                return Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(obj));
+            }
+            catch (Exception ex)
+            {
+                LogError("Error al serializar JSON", ex);
+                throw;
+            }
         }
 
-        private void Log(string message)
-        {
-            Console.WriteLine($"[{DateTime.Now}] {message}");
-        }
+        // Métodos de logging
+        private void Log(string message) => Console.WriteLine($"[{DateTime.Now}] {message}");
+        private void LogError(string message, Exception ex) => Console.WriteLine($"[{DateTime.Now}] ERROR: {message}. Detalles: {ex.Message}");
 
-        public void Dispose()
-        {
-            Log("Liberando recursos...");
-            _natsConnection?.Dispose();
-        }
+        // Liberación de recursos
+        public void Dispose() => _httpClient?.Dispose();
     }
 }

@@ -1,5 +1,6 @@
 ﻿using System.ServiceModel;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace soap_productos
 {
@@ -7,35 +8,26 @@ namespace soap_productos
     public interface IService1
     {
         [OperationContract]
-        List<Product> GetAllProducts();
+        Task<List<Product>> GetAllProducts();
 
         [OperationContract]
-        Product GetProductById(int id);
+        Task<Product> GetProductById(int id);
 
         [OperationContract]
-        List<ProductStock> GetProductsWithStock();
+        Task<List<Product>> GetProductsWithStock(); // Retornará lista de productos con stock
 
         [OperationContract]
-        List<Product> ValidateProducts(List<int> ids);
+        Task<List<Product>> FindLowStockProducts(int minStock); // Cambiado para recibir el stock mínimo
     }
 
-    // Define el modelo de Producto
+    // Clases de datos ajustadas
     public class Product
     {
         public int Id { get; set; }
         public string Nombre { get; set; }
-        public string Descripcion { get; set; }
         public decimal Precio { get; set; }
         public int Stock { get; set; }
         public int IdCategoria { get; set; }
-        public string ImagenUrl { get; set; }
-        public bool Activo { get; set; }
-    }
-
-    // Define el modelo para productos con stock
-    public class ProductStock
-    {
-        public string Nombre { get; set; }
-        public int Stock { get; set; }
+        public bool Status { get; set; }
     }
 }
