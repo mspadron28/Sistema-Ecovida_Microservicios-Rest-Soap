@@ -25,6 +25,11 @@ export class PedidosController {
     return this.pedidosService.findOne(id);
   }
 
+  @MessagePattern('validatePedido')
+  validate(@Payload() id: number) {
+    return this.pedidosService.validateId(id);
+  }
+
   @MessagePattern('updatePedido')
   update(@Payload() updatePedidoDto: UpdatePedidoDto) {
     return this.pedidosService.update(updatePedidoDto.id, updatePedidoDto);

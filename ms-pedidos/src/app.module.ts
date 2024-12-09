@@ -4,7 +4,5 @@ import { PedidosModule } from './modules/pedidos/pedidos.module';
 
 @Module({
   imports: [PrismaModule, PedidosModule],
-  controllers: [],
-  providers: [],
 })
 export class AppModule {}

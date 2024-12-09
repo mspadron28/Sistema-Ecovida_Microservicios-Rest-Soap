@@ -1,5 +1,4 @@
 import { HttpStatus, Inject, Injectable, Logger } from '@nestjs/common';
-import { CreatePedidoDto } from './dto/create-pedido.dto';
 import { UpdatePedidoDto } from './dto/update-pedido.dto';
 import { PrismaService } from '../prisma/prisma.service';
 import { NATS_SERVICE } from 'src/config';
@@ -50,19 +49,13 @@ export class PedidosService {
         return acc + price * pedidoItem.cantidad;
       }, 0);
 
-      const iva = precioTotal*0.15;
+      const iva = precioTotal * 0.15;
       const precioTotalIva = precioTotal + iva;
-
 
       // 3. Calcular los valores totales del pedido
 
-   
-
       // Calcular la cantidad total de productos
-      const cantidadTotal = items.reduce(
-        (acc, item) => acc + item.cantidad,
-        0,
-      );
+      const cantidadTotal = items.reduce((acc, item) => acc + item.cantidad, 0);
 
       // 4. Crear la transacción en la base de datos
       const pedido = await this.prisma.pedidos.create({
@@ -70,19 +63,20 @@ export class PedidosService {
           id_usuario: idUser,
           fecha_pedido: new Date(),
           estado: 'PENDIENTE',
-          precioTotalPedido:precioTotalIva,
+          precioTotalPedido: precioTotalIva,
           cantidadTotalPedido: cantidadTotal,
           detalle_pedido: {
             createMany: {
-              data: items.map((pedidoItem)=>({
+              data: items.map((pedidoItem) => ({
                 precio_unitario: products.find(
                   (product) => product.id_producto === pedidoItem.idProducto,
                 ).precio,
-                id_producto:pedidoItem.idProducto,
+                id_producto: pedidoItem.idProducto,
                 cantidad: pedidoItem.cantidad,
-                subtotal: products.find(
-                  (product) => product.id_producto === pedidoItem.idProducto,
-                ).precio * pedidoItem.cantidad,
+                subtotal:
+                  products.find(
+                    (product) => product.id_producto === pedidoItem.idProducto,
+                  ).precio * pedidoItem.cantidad,
               })),
             },
           },
@@ -93,9 +87,9 @@ export class PedidosService {
               id_producto: true,
               cantidad: true,
               precio_unitario: true,
-              subtotal: true
-            }
-          }
+              subtotal: true,
+            },
+          },
         },
       });
 
@@ -104,8 +98,9 @@ export class PedidosService {
         ...pedido,
         detalle_pedido: pedido.detalle_pedido.map((detalle) => ({
           ...detalle,
-          nombre: products.find((producto) => producto.id_producto === detalle.id_producto)
-            ?.nombre,
+          nombre: products.find(
+            (producto) => producto.id_producto === detalle.id_producto,
+          )?.nombre,
         })),
       };
     } catch (error) {
@@ -132,21 +127,21 @@ export class PedidosService {
           },
         },
       });
-  
+
       if (!pedidos.length) {
         throw new Error('No existen pedidos.');
       }
-  
+
       // 2. Obtener los IDs de los productos relacionados
       const productIds = pedidos.flatMap((pedido) =>
         pedido.detalle_pedido.map((detalle) => detalle.id_producto),
       );
-  
+
       // 3. Consultar información de los productos (nombres)
       const products = await firstValueFrom(
         this.client.send('validate_productos', productIds),
       );
-  
+
       // 4. Reemplazar id_producto por nombre en los detalles del pedido
       const pedidosConNombres = pedidos.map((pedido) => ({
         ...pedido,
@@ -157,13 +152,32 @@ export class PedidosService {
           )?.nombre,
         })),
       }));
-  
+
       return pedidosConNombres;
     } catch (error) {
       throw new Error(`Error al obtener los pedidos: ${error.message}`);
     }
   }
-  
+
+  async validateId(id: number) {
+    try {
+      // 1. validar id con base de datos
+      const pedido = await this.prisma.pedidos.findUnique({
+        where: { id_pedido: id },
+        select: {
+          id_pedido: true,
+        },
+      });
+
+      if (!pedido) {
+        throw new Error(`Id ${id} del pedido no encontrado.`);
+      }
+
+      return pedido;
+    } catch (error) {
+      throw new Error(`Error al buscar el pedido: ${error.message}`);
+    }
+  }
 
   async findOne(id: number) {
     try {
@@ -181,19 +195,21 @@ export class PedidosService {
           },
         },
       });
-  
+
       if (!pedido) {
         throw new Error('Pedido no encontrado.');
       }
-  
+
       // 2. Obtener los IDs de los productos del pedido
-      const productIds = pedido.detalle_pedido.map((detalle) => detalle.id_producto);
-  
+      const productIds = pedido.detalle_pedido.map(
+        (detalle) => detalle.id_producto,
+      );
+
       // 3. Consultar los nombres de los productos relacionados
       const products = await firstValueFrom(
         this.client.send('validate_productos', productIds),
       );
-  
+
       // 4. Mapear los detalles para incluir los nombres de los productos
       const pedidoConNombre = {
         ...pedido,
@@ -204,13 +220,12 @@ export class PedidosService {
           )?.nombre,
         })),
       };
-  
+
       return pedidoConNombre;
     } catch (error) {
       throw new Error(`Error al buscar el pedido: ${error.message}`);
     }
   }
-  
 
   update(id: number, updatePedidoDto: UpdatePedidoDto) {
     return `This action updates a #${id} pedido`;

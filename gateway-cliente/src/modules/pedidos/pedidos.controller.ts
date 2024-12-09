@@ -16,6 +16,18 @@ export class PedidosController {
     @Inject(NATS_SERVICE) private readonly client: ClientProxy,
   ) {}
 
+   //Validar id de pedido
+   @UseGuards(AuthGuard, RoleGuard)
+   @Roles(Role.GESTOR_PEDIDOS) 
+   @Get('validar/:id')
+   validate(@Param('id', ParseIntPipe) id: number) {
+     return this.client.send('validatePedido',id).pipe(
+      catchError(error=>{
+        throw new RpcException(error)
+      })
+    );
+   }
+
 
   //Crear pedido + detalle
   @UseGuards(AuthGuard, RoleGuard)
