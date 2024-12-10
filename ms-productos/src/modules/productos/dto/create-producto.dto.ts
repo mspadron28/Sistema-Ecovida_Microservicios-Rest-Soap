@@ -3,6 +3,9 @@ import { IsInt, IsString, IsDecimal, IsNotEmpty, Min, Max, IsBoolean, Matches } 
 export class CreateProductoDto {
   @IsString()
   @IsNotEmpty()
+  @Matches(/^[a-zA-Z0-9\sáéíóúÁÉÍÓÚñÑ.,-]+$/, {
+    message: 'El nombre contiene caracteres no permitidos.',
+  })
   nombre: string;
 
   @Matches(/^\d+(\.\d{1,2})?$/, {

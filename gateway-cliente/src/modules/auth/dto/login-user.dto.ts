@@ -1,12 +1,21 @@
-import { IsEmail, IsString, IsStrongPassword } from "class-validator";
+import { IsEmail, IsString, IsStrongPassword, Matches } from "class-validator";
 
 export class LoginUserDto {
 
     @IsString()
     @IsEmail()
-    email:string
-
+    @Matches(/^[a-zA-Z0-9@._-]+$/, {
+      message: 'El correo electrónico contiene caracteres no permitidos.',
+    })
+    email: string;
+  
     @IsString()
     @IsStrongPassword()
-    password:string
+    @Matches(/^[^\s'";<>]*$/, {
+      message: 'La contraseña contiene caracteres no permitidos.',
+    })
+    password: string;
+
+
+    
 }
