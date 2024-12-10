@@ -14,7 +14,9 @@ import { AuthGuard, RoleGuard } from './guards';
 export class AuthController {
   constructor(@Inject(NATS_SERVICE) private readonly client: ClientProxy) {}
 
+  @UseGuards(AuthGuard, RoleGuard)
   @Post('register')
+  @Roles(Role.ADMINISTRADOR)
   registerUser(@Body() registerUser: RegisterUserDto) {
     return this.client.send('auth.register.user', registerUser)
     .pipe(

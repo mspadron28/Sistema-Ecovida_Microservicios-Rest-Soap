@@ -24,7 +24,9 @@ import { catchError } from 'rxjs';
 export class ProductosController {
   constructor(@Inject(NATS_SERVICE) private readonly client: ClientProxy) {}
 
+  @UseGuards(AuthGuard, RoleGuard)
   @Post() //Crear un producto
+  @Roles(Role.GESTOR_PRODUCTOS)
   create(@Body() createProductoDto: CreateProductoDto) {
     return this.client.send('createProducto', createProductoDto).pipe(
       catchError((error) => {
@@ -45,7 +47,9 @@ export class ProductosController {
     );
   }
 
+  @UseGuards(AuthGuard, RoleGuard)
   @Get('stock')
+  @Roles(Role.GESTOR_PRODUCTOS)
   findAllProductosStock() { //Obtener todos los productos con stock
     return this.client.send('findAllProductosStock', {}).pipe(
       catchError((error) => {
@@ -53,8 +57,9 @@ export class ProductosController {
       }),
     );
   }
-
-  @Get(':id') //Obtener un producto
+  @UseGuards(AuthGuard, RoleGuard)
+  @Get(':id') 
+  @Roles(Role.GESTOR_PRODUCTOS)//Obtener un producto
   findOne(@Param('id', ParseIntPipe) id: number) {
     return this.client.send('findOneProduct', id).pipe(
       catchError((error) => {
@@ -62,7 +67,10 @@ export class ProductosController {
       }),
     );
   }
-  @Get('stock/:id') //Obtener un producto
+  
+  @UseGuards(AuthGuard, RoleGuard)
+  @Get('stock/:id') 
+  @Roles(Role.GESTOR_PRODUCTOS)//Obtener un producto
   findOneByStock(@Param('id', ParseIntPipe) id: number) {
     return this.client.send('findOneProductByStock', id).pipe(
       catchError((error) => {
@@ -71,7 +79,9 @@ export class ProductosController {
     );
   }
 
+  @UseGuards(AuthGuard, RoleGuard)
   @Patch() //Actualizar un producto
+  @Roles(Role.GESTOR_PRODUCTOS)
   update(@Body() updateProductoDto: UpdateProductoDto) {
     return this.client.send('actualizarStatusProducto', updateProductoDto).pipe(
       catchError((error) => {
@@ -79,8 +89,9 @@ export class ProductosController {
       }),
     );
   }
-
-  @Post('stock-minimo') //Obtener productos con stock bajo
+  @UseGuards(AuthGuard, RoleGuard)
+  @Post('stock-minimo')
+  @Roles(Role.GESTOR_PRODUCTOS) //Obtener productos con stock bajo
   findLowStockProducts(@Body() body: { minStock: number }) {
     return this.client.send('findLowStockProducts', body.minStock).pipe(
       catchError((error) => {

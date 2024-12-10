@@ -11,10 +11,15 @@ namespace soap_productos
     {
         private readonly HttpClient _httpClient;
         private readonly string _baseUrl = "http://localhost:3000/api/productos";  // URL base del gateway-cliente
+        private readonly string _jwtToken = "AeyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY3NTc0MThkMDYzNjcwZGZiYTc5NzY4YiIsIm5vbWJyZSI6IkRhdmlkX0NhbnR1w7FhIiwiZW1haWwiOiJlZGNhbnR1bmFAZ21haWwuY29tIiwicm9sZXMiOlsiNjc1MzMwZmIxZWU4MDI2M2FkNjc0YjNkIl0sImlhdCI6MTczMzgwMzQ3MywiZXhwIjoxNzMzODEwNjczfQ.aiwsjm2dtWrxapQvMLV4CMh6qK9NMofysuJfPmgfYLc";
 
         public Service1()
         {
             _httpClient = new HttpClient();
+
+            // Configurar el encabezado Authorization con el token JWT
+            _httpClient.DefaultRequestHeaders.Authorization =
+                new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", _jwtToken);
         }
 
         // Obtener todos los productos (GET /productos)

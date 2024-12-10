@@ -1,14 +1,22 @@
 {
   "Version": 1,
-  "WorkspaceRootPath": "D:\\Software Seguro\\1er Parcial\\Sistema-Ecovida_Microservicios-Rest-Soap\\soap-productos\\",
+  "WorkspaceRootPath": "C:\\Users\\MATIAS\\Desktop\\ESPE\\Septimo_Semestre\\Software Seguro\\Git_Proyecto\\soap-productos\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{AB7204AB-D4F1-48D2-8AC7-68550FEAE5A5}|soap-productos\\soap-productos.csproj|d:\\software seguro\\1er parcial\\sistema-ecovida_microservicios-rest-soap\\soap-productos\\soap-productos\\service1.svc.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "AbsoluteMoniker": "D:0:0:{AB7204AB-D4F1-48D2-8AC7-68550FEAE5A5}|soap-productos\\soap-productos.csproj|c:\\users\\matias\\desktop\\espe\\septimo_semestre\\software seguro\\git_proyecto\\soap-productos\\soap-productos\\service1.svc.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{AB7204AB-D4F1-48D2-8AC7-68550FEAE5A5}|soap-productos\\soap-productos.csproj|solutionrelative:soap-productos\\service1.svc.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{AB7204AB-D4F1-48D2-8AC7-68550FEAE5A5}|soap-productos\\soap-productos.csproj|D:\\Software Seguro\\1er Parcial\\Sistema-Ecovida_Microservicios-Rest-Soap\\soap-productos\\soap-productos\\iservice1.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "AbsoluteMoniker": "D:0:0:{AB7204AB-D4F1-48D2-8AC7-68550FEAE5A5}|soap-productos\\soap-productos.csproj|C:\\Users\\MATIAS\\Desktop\\ESPE\\Septimo_Semestre\\Software Seguro\\Git_Proyecto\\soap-productos\\soap-productos\\iservice1.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{AB7204AB-D4F1-48D2-8AC7-68550FEAE5A5}|soap-productos\\soap-productos.csproj|solutionrelative:soap-productos\\iservice1.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{AB7204AB-D4F1-48D2-8AC7-68550FEAE5A5}|soap-productos\\soap-productos.csproj|c:\\users\\matias\\desktop\\espe\\septimo_semestre\\software seguro\\git_proyecto\\soap-productos\\soap-productos\\packages.config||{FA3CD31E-987B-443A-9B81-186104E8DAC1}",
+      "RelativeMoniker": "D:0:0:{AB7204AB-D4F1-48D2-8AC7-68550FEAE5A5}|soap-productos\\soap-productos.csproj|solutionrelative:soap-productos\\packages.config||{FA3CD31E-987B-443A-9B81-186104E8DAC1}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{AB7204AB-D4F1-48D2-8AC7-68550FEAE5A5}|soap-productos\\soap-productos.csproj|c:\\users\\matias\\desktop\\espe\\septimo_semestre\\software seguro\\git_proyecto\\soap-productos\\soap-productos\\web.config||{FA3CD31E-987B-443A-9B81-186104E8DAC1}",
+      "RelativeMoniker": "D:0:0:{AB7204AB-D4F1-48D2-8AC7-68550FEAE5A5}|soap-productos\\soap-productos.csproj|solutionrelative:soap-productos\\web.config||{FA3CD31E-987B-443A-9B81-186104E8DAC1}"
     }
   ],
   "DocumentGroupContainers": [
@@ -18,56 +26,59 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 5,
+          "SelectedChildIndex": 2,
           "Children": [
             {
-              "$type": "Bookmark",
-              "Name": "ST:0:0:{b1e99781-ab81-11d0-b683-00aa00a3ee26}"
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "packages.config",
+              "DocumentMoniker": "C:\\Users\\MATIAS\\Desktop\\ESPE\\Septimo_Semestre\\Software Seguro\\Git_Proyecto\\soap-productos\\soap-productos\\packages.config",
+              "RelativeDocumentMoniker": "soap-productos\\packages.config",
+              "ToolTip": "C:\\Users\\MATIAS\\Desktop\\ESPE\\Septimo_Semestre\\Software Seguro\\Git_Proyecto\\soap-productos\\soap-productos\\packages.config",
+              "RelativeToolTip": "soap-productos\\packages.config",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000601|",
+              "WhenOpened": "2024-12-10T03:45:50.492Z",
+              "EditorCaption": ""
             },
             {
-              "$type": "Bookmark",
-              "Name": "ST:0:0:{a83394e3-39c2-4678-a3c8-364b69d78fd3}"
-            },
-            {
-              "$type": "Bookmark",
-              "Name": "ST:0:0:{3ae79031-e1bc-11d0-8f78-00a0c9110057}"
-            },
-            {
-              "$type": "Bookmark",
-              "Name": "ST:0:0:{0174dea2-fdbe-4ef1-8f99-c0beae78880f}"
-            },
-            {
-              "$type": "Bookmark",
-              "Name": "ST:0:0:{1c4feeaa-4718-4aa9-859d-94ce25d182ba}"
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "Web.config",
+              "DocumentMoniker": "C:\\Users\\MATIAS\\Desktop\\ESPE\\Septimo_Semestre\\Software Seguro\\Git_Proyecto\\soap-productos\\soap-productos\\Web.config",
+              "RelativeDocumentMoniker": "soap-productos\\Web.config",
+              "ToolTip": "C:\\Users\\MATIAS\\Desktop\\ESPE\\Septimo_Semestre\\Software Seguro\\Git_Proyecto\\soap-productos\\soap-productos\\Web.config",
+              "RelativeToolTip": "soap-productos\\Web.config",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000601|",
+              "WhenOpened": "2024-12-10T03:45:11.238Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
               "DocumentIndex": 0,
               "Title": "Service1.svc.cs",
-              "DocumentMoniker": "D:\\Software Seguro\\1er Parcial\\Sistema-Ecovida_Microservicios-Rest-Soap\\soap-productos\\soap-productos\\Service1.svc.cs",
+              "DocumentMoniker": "C:\\Users\\MATIAS\\Desktop\\ESPE\\Septimo_Semestre\\Software Seguro\\Git_Proyecto\\soap-productos\\soap-productos\\Service1.svc.cs",
               "RelativeDocumentMoniker": "soap-productos\\Service1.svc.cs",
-              "ToolTip": "D:\\Software Seguro\\1er Parcial\\Sistema-Ecovida_Microservicios-Rest-Soap\\soap-productos\\soap-productos\\Service1.svc.cs",
+              "ToolTip": "C:\\Users\\MATIAS\\Desktop\\ESPE\\Septimo_Semestre\\Software Seguro\\Git_Proyecto\\soap-productos\\soap-productos\\Service1.svc.cs",
               "RelativeToolTip": "soap-productos\\Service1.svc.cs",
-              "ViewState": "AgIAAAYAAAAAAAAAAAAAAAwAAABBAAAAAAAAAA==",
+              "ViewState": "AgIAAAYAAAAAAAAAAAAAABEAAAAXAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2024-12-08T18:38:18.699Z",
               "EditorCaption": ""
             },
             {
-              "$type": "Bookmark",
-              "Name": "ST:0:0:{34e76e81-ee4a-11d0-ae2e-00a0c90fffc3}"
-            },
-            {
               "$type": "Document",
               "DocumentIndex": 1,
               "Title": "IService1.cs",
-              "DocumentMoniker": "D:\\Software Seguro\\1er Parcial\\Sistema-Ecovida_Microservicios-Rest-Soap\\soap-productos\\soap-productos\\IService1.cs",
+              "DocumentMoniker": "C:\\Users\\MATIAS\\Desktop\\ESPE\\Septimo_Semestre\\Software Seguro\\Git_Proyecto\\soap-productos\\soap-productos\\IService1.cs",
               "RelativeDocumentMoniker": "soap-productos\\IService1.cs",
-              "ToolTip": "D:\\Software Seguro\\1er Parcial\\Sistema-Ecovida_Microservicios-Rest-Soap\\soap-productos\\soap-productos\\IService1.cs",
+              "ToolTip": "C:\\Users\\MATIAS\\Desktop\\ESPE\\Septimo_Semestre\\Software Seguro\\Git_Proyecto\\soap-productos\\soap-productos\\IService1.cs",
               "RelativeToolTip": "soap-productos\\IService1.cs",
-              "ViewState": "AgIAAAsAAAAAAAAAAAAwwCEAAAAAAAAAAAAAAA==",
+              "ViewState": "AgIAAAMAAAAAAAAAAAAqwAoAAAAcAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-12-08T18:37:22.666Z"
+              "WhenOpened": "2024-12-08T18:37:22.666Z",
+              "EditorCaption": ""
             }
           ]
         }

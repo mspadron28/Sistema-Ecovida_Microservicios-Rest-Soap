@@ -11,6 +11,9 @@ import { CreateEnvioDto } from './dto/create-envio.dto';
 @Controller('envios')
 export class EnviosController {
   constructor(@Inject(NATS_SERVICE) private readonly client: ClientProxy) {}
+
+  @UseGuards(AuthGuard, RoleGuard)
+  @Roles(Role.GESTOR_ENVIOS)
   @Get()
   findAll() {
     return this.client.send('findAllEnvios', {}).pipe(
@@ -22,7 +25,7 @@ export class EnviosController {
 
   //Metodo para crer envio pasando el usuario
  @UseGuards(AuthGuard, RoleGuard)
-  @Roles(Role.GESTOR_PEDIDOS)
+  @Roles(Role.GESTOR_ENVIOS)
   @Post('crear')
   create(@Payload() createEnvioDto: CreateEnvioDto) {
     return this.client.send('createEnvio',  createEnvioDto)
