@@ -47,6 +47,16 @@ export class ProductosController {
     );
   }
 
+  //Obtener productos por categoria
+  @Get('categoria/:nombre') 
+  findByCategory(@Param('nombre') nombre: string) {
+    return this.client.send('findProuctosByCategory', nombre).pipe(
+      catchError((error) => {
+        throw new RpcException(error);
+      }),
+    );
+  }
+
   @UseGuards(AuthGuard, RoleGuard)
   @Get('stock')
   @Roles(Role.GESTOR_PRODUCTOS)

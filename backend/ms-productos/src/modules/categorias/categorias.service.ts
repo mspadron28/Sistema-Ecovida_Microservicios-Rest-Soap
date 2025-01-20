@@ -49,10 +49,10 @@ export class CategoriasService {
   }
 
   // Obtener una categoría por ID
-  async findOne(id: number) {
+  async findOne(nombre: string) {
     try {
-      const categoria = await this.prisma.categorias.findUnique({
-        where: { id_categoria: id },
+      const categoria = await this.prisma.categorias.findFirst({
+        where: { nombre },
         select: {
           id_categoria: true,
           nombre: true,

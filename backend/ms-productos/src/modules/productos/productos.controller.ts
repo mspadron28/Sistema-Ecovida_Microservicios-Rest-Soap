@@ -8,20 +8,22 @@ import { UpdateProductoDto } from './dto/update-producto.dto';
 export class ProductosController {
   constructor(private readonly productosService: ProductosService) {}
 
-   // Obtener productos con stock bajo
-   @MessagePattern('findLowStockProducts')
-   findLowStockProducts(@Payload() minStock: number ) {
-     return this.productosService.findLowStockProducts(minStock);
-   }
+  // Obtener productos con stock bajo
+  @MessagePattern('findLowStockProducts')
+  findLowStockProducts(@Payload() minStock: number) {
+    return this.productosService.findLowStockProducts(minStock);
+  }
 
   //Validar los ids mediante un arreglo de ellos
   @MessagePattern('validate_productos')
-  validateProduct(@Payload() ids: number[]){
+  validateProduct(@Payload() ids: number[]) {
     return this.productosService.validateProducts(ids);
   }
   // Actulizar stock de un producto
   @MessagePattern('actualizar_stock')
-  updateProductStock(@Payload() data: { idProducto: number; cantidad: number }) {
+  updateProductStock(
+    @Payload() data: { idProducto: number; cantidad: number },
+  ) {
     return this.productosService.updateProductStock(data);
   }
 
@@ -35,6 +37,12 @@ export class ProductosController {
   findAll() {
     return this.productosService.findAll();
   }
+  // Obtener productos por categoria
+  @MessagePattern('findProuctosByCategory')
+  findProductByCategory(@Payload() nombre: string ) {
+    return this.productosService.findByCategory(nombre);
+  } 
+
   // Obtener todos los productos con su stock
   @MessagePattern('findAllProductosStock')
   findAllProductsWithStock() {
@@ -57,7 +65,4 @@ export class ProductosController {
   updateProductStatus(@Payload() updateProductoDto: UpdateProductoDto) {
     return this.productosService.updateProductStatus(updateProductoDto);
   }
-  
-
-
 }

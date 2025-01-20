@@ -1,6 +1,5 @@
 import { HttpStatus, Inject, Injectable, Logger } from '@nestjs/common';
 
-import { UpdateCarritoDto } from './dto/update-carrito.dto';
 import { PrismaService } from '../prisma/prisma.service';
 import { NATS_SERVICE } from 'src/config';
 import { ClientProxy, RpcException } from '@nestjs/microservices';

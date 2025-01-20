@@ -2,7 +2,8 @@
 
 import Link from "next/link";
 import { useState } from "react";
-import { FaLeaf, FaHome, FaShoppingCart, FaBars } from "react-icons/fa";
+import { FaLeaf, FaHome, FaShoppingCart, FaBars} from "react-icons/fa";
+import { GrCatalog } from "react-icons/gr";
 
 export default function Navbar() {
   const [isMobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -25,12 +26,20 @@ export default function Navbar() {
           <span>Home</span>
         </Link>
         <Link
+          href="/catalogo"
+          className="flex items-center gap-2 text-gray-800 hover:text-green-600 transition"
+        >
+          <GrCatalog  className="text-xl" />
+          <span>Catalogo</span>
+        </Link>
+        <Link
           href="/pedidos"
           className="flex items-center gap-2 text-gray-800 hover:text-green-600 transition"
         >
           <FaShoppingCart className="text-xl" />
           <span>Pedidos</span>
         </Link>
+    
       </div>
 
       {/* Botón de Login */}

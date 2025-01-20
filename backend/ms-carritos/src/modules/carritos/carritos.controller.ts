@@ -1,7 +1,6 @@
 import { Controller } from '@nestjs/common';
 import { MessagePattern, Payload } from '@nestjs/microservices';
 import { CarritosService } from './carritos.service';
-import { UpdateCarritoDto } from './dto/update-carrito.dto';
 import { CreateCarritoDto } from './dto';
 
 

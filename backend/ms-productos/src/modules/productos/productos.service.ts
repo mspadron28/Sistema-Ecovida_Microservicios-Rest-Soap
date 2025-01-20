@@ -1,12 +1,17 @@
-import { HttpStatus, Injectable } from '@nestjs/common';
+import { HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { CreateProductoDto } from './dto/create-producto.dto';
 import { PrismaService } from '../prisma/prisma.service';
-import { RpcException } from '@nestjs/microservices';
+import { ClientProxy, RpcException } from '@nestjs/microservices';
 import { UpdateProductoDto } from './dto/update-producto.dto';
+import { NATS_SERVICE } from 'src/config';
+import { firstValueFrom } from 'rxjs';
 
 @Injectable()
 export class ProductosService {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    @Inject(NATS_SERVICE) private readonly client: ClientProxy,
+  ) {}
   //Crear producto
   async create(createProductoDto: CreateProductoDto) {
     try {
@@ -46,6 +51,51 @@ export class ProductosService {
     } catch (error) {
       throw new RpcException({
         message: error.message || 'Error al obtener los productos.',
+        status: HttpStatus.BAD_REQUEST,
+      });
+    }
+  }
+  // Obtener productos por categoría
+  // Obtener productos por nombre de categoría
+  async findByCategory(nombreCategoria: string) {
+    try {
+      // Obtener el ID de la categoría desde el servicio de categorías
+      const categoria = await firstValueFrom(
+        this.client.send('findOneCategoria', nombreCategoria),
+      );
+
+      if (!categoria || !categoria.id_categoria) {
+        throw new RpcException({
+          message: `No se encontró la categoría con el nombre ${nombreCategoria}.`,
+          status: HttpStatus.NOT_FOUND,
+        });
+      }
+
+      const productos = await this.prisma.productos.findMany({
+        where: {
+          id_categoria: categoria.id_categoria,
+        },
+        select: {
+          id_producto: true,
+          nombre: true,
+          precio: true,
+          stock: true,
+          status: true,
+        },
+      });
+
+      if (!productos.length) {
+        throw new RpcException({
+          message: `No se encontraron productos para la categoría con nombre ${nombreCategoria}.`,
+          status: HttpStatus.NOT_FOUND,
+        });
+      }
+
+      return productos;
+    } catch (error) {
+      throw new RpcException({
+        message:
+          error.message || 'Error al obtener los productos por categoría.',
         status: HttpStatus.BAD_REQUEST,
       });
     }
@@ -195,7 +245,7 @@ export class ProductosService {
     }
   }
 
-  // Obtener productos con stock menor a un valor dado 
+  // Obtener productos con stock menor a un valor dado
   async findLowStockProducts(minStock: number) {
     try {
       const productos = await this.prisma.productos.findMany({
@@ -226,5 +276,4 @@ export class ProductosService {
       });
     }
   }
-
 }
