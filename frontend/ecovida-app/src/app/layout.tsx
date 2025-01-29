@@ -19,9 +19,11 @@ export default function RootLayout({
       <body className={`${lusitana.className} antialiased`}>
         <Providers>
           <Navbar />
+          
           {children}
         </Providers>
       </body>
     </html>
   );
 }
+

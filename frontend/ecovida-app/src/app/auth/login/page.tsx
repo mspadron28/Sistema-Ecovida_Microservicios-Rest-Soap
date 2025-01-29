@@ -14,7 +14,7 @@ const Login = () => {
         const res = await signIn('credentials', {
             email,    // Usamos email en vez de username
             password,
-            callbackUrl: '/pedidos'
+            callbackUrl: '/'
         });
 
         if (res?.error) {

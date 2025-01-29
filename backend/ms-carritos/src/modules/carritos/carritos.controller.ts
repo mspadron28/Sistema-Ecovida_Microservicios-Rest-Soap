@@ -1,8 +1,7 @@
-import { Controller } from '@nestjs/common';
+import { BadRequestException, Controller } from '@nestjs/common';
 import { MessagePattern, Payload } from '@nestjs/microservices';
 import { CarritosService } from './carritos.service';
 import { CreateCarritoDto } from './dto';
-
 
 @Controller()
 export class CarritosController {
@@ -11,7 +10,33 @@ export class CarritosController {
   @MessagePattern('createCarrito')
   create(@Payload() data: CreateCarritoDto) {
     const { items, idUser } = data;
-    return this.carritosService.create(items,idUser);
+    return this.carritosService.createOrUpdate(items, idUser);
+  }
+
+  //Actualizar según stock
+  @MessagePattern('updateCarritoCantidad')
+  updateCarritoCantidad(
+    @Payload()
+    data: {
+      idUser: string;
+      idProducto: number;
+      stock: number;
+      increase: boolean;
+    },
+  ) {
+    const { idUser, idProducto, stock, increase } = data;
+    return this.carritosService.updateCarritoCantidad(
+      idUser,
+      idProducto,
+      stock,
+      increase,
+    );
+  }
+
+  //Remover carrito item según id producto
+  @MessagePattern('removeCarritoItem')
+  removeCarritoItem(@Payload() data: { idUser: string; idProducto: number }) {
+    return this.carritosService.removeCarritoItem(data.idUser, data.idProducto);
   }
 
   @MessagePattern('findAllCarritos')
@@ -24,4 +49,8 @@ export class CarritosController {
     return this.carritosService.findOne(id);
   }
 
+  @MessagePattern('findCarritoByUserId')
+  findCarritoByUserId(@Payload() idUser: string) {
+    return this.carritosService.findCarritoByUserId(idUser);
+  }
 }

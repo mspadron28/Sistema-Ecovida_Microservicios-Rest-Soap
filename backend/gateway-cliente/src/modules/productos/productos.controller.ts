@@ -47,7 +47,7 @@ export class ProductosController {
     );
   }
 
-  //Obtener productos por categoria
+  //Obtener productos por nombre categoria
   @Get('categoria/:nombre') 
   findByCategory(@Param('nombre') nombre: string) {
     return this.client.send('findProuctosByCategory', nombre).pipe(
@@ -67,6 +67,8 @@ export class ProductosController {
       }),
     );
   }
+
+  
   @UseGuards(AuthGuard, RoleGuard)
   @Get(':id') 
   @Roles(Role.GESTOR_PRODUCTOS)//Obtener un producto

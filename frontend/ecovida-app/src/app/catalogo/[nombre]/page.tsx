@@ -10,6 +10,7 @@ import {
   CardFooter,
 } from "@/components/ui/card";
 import { CheckCircle, AlertCircle, ShoppingCart } from "lucide-react";
+import { useCart } from "@/utils/cartContext"; // Importa el hook del contexto del carrito
 
 interface Producto {
   id_producto: number;
@@ -24,6 +25,9 @@ export default function CategoryDetailPage() {
   const [productos, setProductos] = useState<Producto[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
+
+  // Hook del carrito
+  const { cartItems, addToCart, updateCartItem } = useCart();
 
   useEffect(() => {
     if (!nombre) return;
@@ -82,58 +86,93 @@ export default function CategoryDetailPage() {
       )}
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-        {productos.map((producto) => (
-          <Card key={producto.id_producto} className="shadow-lg rounded-lg">
-            <CardHeader>
-              <CardTitle className="text-lg font-bold flex items-center gap-2">
-                <span className="text-green-500">
-                  <CheckCircle size={20} />
-                </span>
-                {producto.nombre}
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-xl font-semibold text-cyan-600">
-                {producto.precio
-                  ? `$${producto.precio}`
-                  : "Precio no disponible"}
-              </p>
-              <p
-                className={`text-sm mt-2 flex items-center gap-1 ${
-                  producto.stock > 0 ? "text-green-500" : "text-red-500"
-                }`}
-              >
-                {producto.stock > 0 ? (
-                  <>
-                    <CheckCircle size={16} /> Disponible
-                  </>
-                ) : (
-                  <>
-                    <AlertCircle size={16} /> Agotado
-                  </>
-                )}
-              </p>
-              <p
-                className={`text-sm mt-1 flex items-center gap-1 ${
-                  producto.status ? "text-green-500" : "text-gray-500"
-                }`}
-              >
-                {producto.status ? (
-                  <>
-                    <CheckCircle size={16} /> Activo
-                  </>
-                ) : (
-                  <>Inactivo</>
-                )}
-              </p>
-            </CardContent>
-            <CardFooter>
-              <button className="bg-green-500 text-white px-4 py-2 rounded-md flex items-center gap-2 hover:bg-green-600">
-                <ShoppingCart size={16} /> Agregar al Carrito
-              </button>
-            </CardFooter>
-          </Card>
-        ))}
+        {productos.map((producto) => {
+          const existeEnCarrito = cartItems.some(
+            (item) => item.idProducto === producto.id_producto
+          );
+
+          return (
+            <Card key={producto.id_producto} className="shadow-lg rounded-lg">
+              <CardHeader>
+                <CardTitle className="text-lg font-bold flex items-center gap-2">
+                  <span className="text-green-500">
+                    <CheckCircle size={20} />
+                  </span>
+                  {producto.nombre}
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-xl font-semibold text-cyan-600">
+                  {producto.precio
+                    ? `$${producto.precio}`
+                    : "Precio no disponible"}
+                </p>
+                <p
+                  className={`text-sm mt-2 flex items-center gap-1 ${
+                    producto.stock > 0 ? "text-green-500" : "text-red-500"
+                  }`}
+                >
+                  {producto.stock > 0 ? (
+                    <>
+                      <CheckCircle size={16} /> Disponible
+                    </>
+                  ) : (
+                    <>
+                      <AlertCircle size={16} /> Agotado
+                    </>
+                  )}
+                </p>
+                <p
+                  className={`text-sm mt-1 flex items-center gap-1 ${
+                    producto.status ? "text-green-500" : "text-gray-500"
+                  }`}
+                >
+                  {producto.status ? (
+                    <>
+                      <CheckCircle size={16} /> Activo
+                    </>
+                  ) : (
+                    <>Inactivo</>
+                  )}
+                </p>
+              </CardContent>
+              <CardFooter>
+                <button
+                  onClick={() => {
+                    const productoEnCarrito = cartItems.find(
+                      (item) => item.idProducto === producto.id_producto
+                    );
+                    if (productoEnCarrito) {
+                      updateCartItem(producto.id_producto, true);
+                    } else {
+                      addToCart({
+                        idProducto: producto.id_producto,
+                        nombre: producto.nombre,
+                        precio: producto.precio,
+                        cantidad: 1,
+                      });
+                    }
+                  }}
+                  className={`px-4 py-2 rounded-md flex items-center gap-2 ${
+                    cartItems.some(
+                      (item) => item.idProducto === producto.id_producto
+                    )
+                      ? "bg-blue-500 hover:bg-blue-600"
+                      : "bg-green-500 hover:bg-green-600"
+                  } text-white`}
+                  disabled={producto.stock === 0}
+                >
+                  <ShoppingCart size={16} />{" "}
+                  {cartItems.some(
+                    (item) => item.idProducto === producto.id_producto
+                  )
+                    ? "Añadir uno más"
+                    : "Agregar al Carrito"}
+                </button>
+              </CardFooter>
+            </Card>
+          );
+        })}
       </div>
     </div>
   );

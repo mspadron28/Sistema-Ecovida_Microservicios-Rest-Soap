@@ -55,7 +55,6 @@ export class ProductosService {
       });
     }
   }
-  // Obtener productos por categoría
   // Obtener productos por nombre de categoría
   async findByCategory(nombreCategoria: string) {
     try {

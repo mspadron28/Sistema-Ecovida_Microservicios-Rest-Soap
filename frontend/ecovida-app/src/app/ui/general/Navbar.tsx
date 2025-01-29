@@ -1,13 +1,14 @@
 "use client";
 
+import { useCart } from "@/utils/cartContext";
 import Link from "next/link";
 import { useState } from "react";
-import { FaLeaf, FaHome, FaShoppingCart, FaBars} from "react-icons/fa";
+import { FaLeaf, FaHome, FaShoppingCart, FaBars } from "react-icons/fa";
 import { GrCatalog } from "react-icons/gr";
 
 export default function Navbar() {
   const [isMobileMenuOpen, setMobileMenuOpen] = useState(false);
-
+  const { totalQuantity } = useCart();
   return (
     <nav className="bg-white shadow-md fixed top-0 w-full flex items-center justify-between px-6 py-4 z-50">
       {/* Identidad de la marca */}
@@ -29,17 +30,26 @@ export default function Navbar() {
           href="/catalogo"
           className="flex items-center gap-2 text-gray-800 hover:text-green-600 transition"
         >
-          <GrCatalog  className="text-xl" />
+          <GrCatalog className="text-xl" />
           <span>Catalogo</span>
         </Link>
-        <Link
-          href="/pedidos"
-          className="flex items-center gap-2 text-gray-800 hover:text-green-600 transition"
-        >
-          <FaShoppingCart className="text-xl" />
-          <span>Pedidos</span>
-        </Link>
-    
+        <div className="flex items-center gap-4">
+          <Link
+            href="/carrito"
+            className="relative flex items-center gap-2 text-gray-800 hover:text-green-600 transition"
+          >
+            <FaShoppingCart className="text-2xl" />
+
+            {/* Indicador de cantidad de productos en el carrito */}
+            {totalQuantity > 0 && (
+              <span className="absolute -top-2 -right-4 bg-red-500 text-white text-xs font-bold w-5 h-5 flex items-center justify-center rounded-full">
+                {totalQuantity}
+              </span>
+            )}
+
+            <span>Carrito</span>
+          </Link>
+        </div>
       </div>
 
       {/* Botón de Login */}
