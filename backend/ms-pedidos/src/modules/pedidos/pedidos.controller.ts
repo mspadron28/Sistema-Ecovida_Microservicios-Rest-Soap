@@ -12,7 +12,7 @@ export class PedidosController {
   @MessagePattern('createPedido')
   create(@Payload() data: CreatePedidoDto) {
     const { items, idUser } = data;
-    return this.pedidosService.create(items,idUser);
+    return this.pedidosService.create(items, idUser);
   }
 
   @MessagePattern('findAllPedidos')
@@ -24,7 +24,13 @@ export class PedidosController {
   findOne(@Payload() id: number) {
     return this.pedidosService.findOne(id);
   }
+  //OBTENER PEDIDO POR USUARIO
+  @MessagePattern('findPedidosByUserId')
+  findPedidosByUserId(@Payload() idUser: string) {
+    return this.pedidosService.findPedidosByUserId(idUser);
+  }
 
+  //Validar id de pedido
   @MessagePattern('validatePedido')
   validate(@Payload() id: number) {
     return this.pedidosService.validateId(id);

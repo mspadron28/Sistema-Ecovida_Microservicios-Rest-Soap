@@ -48,7 +48,7 @@ export class ProductosController {
   }
 
   //Obtener productos por nombre categoria
-  @Get('categoria/:nombre') 
+  @Get('categoria/:nombre')
   findByCategory(@Param('nombre') nombre: string) {
     return this.client.send('findProuctosByCategory', nombre).pipe(
       catchError((error) => {
@@ -56,22 +56,33 @@ export class ProductosController {
       }),
     );
   }
-
+  //OBTENER PRODUCTOS CON STOCK
   @UseGuards(AuthGuard, RoleGuard)
   @Get('stock')
-  @Roles(Role.GESTOR_PRODUCTOS)
-  findAllProductosStock() { //Obtener todos los productos con stock
+  @Roles(Role.GESTOR_PRODUCTOS, Role.USUARIO)
+  findAllProductosStock() {
+    //Obtener todos los productos con stock
     return this.client.send('findAllProductosStock', {}).pipe(
       catchError((error) => {
         throw new RpcException(error);
       }),
     );
   }
-
-  
+  //OBTENER UN PRODUCTO EN ESPECIFICO CON STOCK
   @UseGuards(AuthGuard, RoleGuard)
-  @Get(':id') 
-  @Roles(Role.GESTOR_PRODUCTOS)//Obtener un producto
+  @Get('stock/:idProducto')
+  @Roles(Role.GESTOR_PRODUCTOS, Role.USUARIO) // Permitir a usuarios y gestores consultar stock
+  findStockByProductId(@Param('idProducto', ParseIntPipe) idProducto: number) {
+    return this.client.send('findStockByProductId', idProducto).pipe(
+      catchError((error) => {
+        throw new RpcException(error);
+      }),
+    );
+  }
+
+  @UseGuards(AuthGuard, RoleGuard)
+  @Get(':id')
+  @Roles(Role.GESTOR_PRODUCTOS) //Obtener un producto
   findOne(@Param('id', ParseIntPipe) id: number) {
     return this.client.send('findOneProduct', id).pipe(
       catchError((error) => {
@@ -79,10 +90,10 @@ export class ProductosController {
       }),
     );
   }
-  
+
   @UseGuards(AuthGuard, RoleGuard)
-  @Get('stock/:id') 
-  @Roles(Role.GESTOR_PRODUCTOS)//Obtener un producto
+  @Get('stock/:id')
+  @Roles(Role.GESTOR_PRODUCTOS) //Obtener un producto
   findOneByStock(@Param('id', ParseIntPipe) id: number) {
     return this.client.send('findOneProductByStock', id).pipe(
       catchError((error) => {
@@ -111,6 +122,4 @@ export class ProductosController {
       }),
     );
   }
-
-  
 }

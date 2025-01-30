@@ -4,6 +4,7 @@ import { useCart } from "@/utils/cartContext";
 import Link from "next/link";
 import { useState } from "react";
 import { FaLeaf, FaHome, FaShoppingCart, FaBars } from "react-icons/fa";
+import { BiTask } from "react-icons/bi";
 import { GrCatalog } from "react-icons/gr";
 
 export default function Navbar() {
@@ -32,6 +33,13 @@ export default function Navbar() {
         >
           <GrCatalog className="text-xl" />
           <span>Catalogo</span>
+        </Link>
+        <Link
+          href="/pedidos"
+          className="flex items-center gap-2 text-gray-800 hover:text-green-600 transition"
+        >
+          <BiTask  className="text-xl" />
+          <span>Pedidos</span>
         </Link>
         <div className="flex items-center gap-4">
           <Link

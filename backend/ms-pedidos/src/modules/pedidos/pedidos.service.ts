@@ -159,6 +159,61 @@ export class PedidosService {
     }
   }
 
+  //OBTENER PEDIDOS DE UN USUARIO 
+  async findPedidosByUserId(idUser: string) {
+    try {
+      // Obtener todos los pedidos de un usuario específico junto con sus detalles
+      const pedidos = await this.prisma.pedidos.findMany({
+        where: {
+          id_usuario: idUser,
+        },
+        include: {
+          detalle_pedido: {
+            select: {
+              id_producto: true,
+              cantidad: true,
+              precio_unitario: true,
+              subtotal: true,
+            },
+          },
+        },
+      });
+  
+      if (!pedidos.length) {
+        throw new Error('No se encontraron pedidos para este usuario.');
+      }
+  
+      // Obtener los IDs de los productos relacionados
+      const productIds = pedidos.flatMap((pedido) =>
+        pedido.detalle_pedido.map((detalle) => detalle.id_producto),
+      );
+  
+      // Consultar información de los productos (nombres)
+      const products = await firstValueFrom(
+        this.client.send('validate_productos', productIds),
+      );
+  
+      // Reemplazar `id_producto` por `nombre` en los detalles del pedido
+      const pedidosConNombres = pedidos.map((pedido) => ({
+        ...pedido,
+        detalle_pedido: pedido.detalle_pedido.map((detalle) => ({
+          ...detalle,
+          nombre: products.find(
+            (product) => product.id_producto === detalle.id_producto,
+          )?.nombre,
+        })),
+      }));
+  
+      return pedidosConNombres;
+    } catch (error) {
+      throw new RpcException({
+        message: `Error al obtener los pedidos del usuario: ${error.message}`,
+        status: HttpStatus.BAD_REQUEST,
+      });
+    }
+  }
+  //VALIDAR EXISTENCIA PEDIDO  
+
   async validateId(id: number) {
     try {
       // 1. validar id con base de datos

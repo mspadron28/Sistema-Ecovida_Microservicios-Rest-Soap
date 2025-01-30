@@ -27,6 +27,7 @@ export class ProductosService {
       });
     }
   }
+
   //Obtener todos los productos
   async findAll() {
     try {
@@ -55,6 +56,7 @@ export class ProductosService {
       });
     }
   }
+
   // Obtener productos por nombre de categoría
   async findByCategory(nombreCategoria: string) {
     try {
@@ -135,6 +137,7 @@ export class ProductosService {
   async findAllProductsWithStock() {
     const productos = await this.prisma.productos.findMany({
       select: {
+
         nombre: true,
         stock: true,
       },
@@ -147,6 +150,25 @@ export class ProductosService {
     }
     return productos;
   }
+
+    // Obtener el stock de un producto específico
+    async findStockByProductId(idProducto: number) {
+      const producto = await this.prisma.productos.findUnique({
+        where: { id_producto: idProducto },
+        select: { stock: true },
+      });
+  
+      if (!producto) {
+        throw new RpcException({
+          message: 'Producto no encontrado',
+          status: HttpStatus.NOT_FOUND,
+        });
+      }
+  
+      return { idProducto, stock: producto.stock };
+    }
+
+
   //Encontrar todos los productos
   async findOne(id: number) {
     try {
@@ -168,6 +190,8 @@ export class ProductosService {
       throw new Error(`Error al buscar el producto: ${error.message}`);
     }
   }
+
+
   //Encontrar todos los productos con stock
   async findOneByStock(id: number) {
     try {

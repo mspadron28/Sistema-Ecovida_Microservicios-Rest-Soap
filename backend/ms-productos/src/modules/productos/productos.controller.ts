@@ -48,6 +48,14 @@ export class ProductosController {
   findAllProductsWithStock() {
     return this.productosService.findAllProductsWithStock();
   }
+
+   // Obtener el stock de un producto específico
+   @MessagePattern('findStockByProductId')
+   findStockByProductId(@Payload() idProducto: number) {
+     return this.productosService.findStockByProductId(idProducto);
+   }
+
+   
   // Obtener un producto
   @MessagePattern('findOneProduct')
   findOne(@Payload() id: number) {
