@@ -13,7 +13,7 @@ export class EnviosController {
   constructor(@Inject(NATS_SERVICE) private readonly client: ClientProxy) {}
 
   @UseGuards(AuthGuard, RoleGuard)
-  @Roles(Role.GESTOR_ENVIOS)
+  @Roles(Role.GESTOR_PEDIDOS)
   @Get()
   findAll() {
     return this.client.send('findAllEnvios', {}).pipe(
@@ -25,7 +25,7 @@ export class EnviosController {
 
   //Metodo para crer envio pasando el usuario
  @UseGuards(AuthGuard, RoleGuard)
-  @Roles(Role.GESTOR_ENVIOS)
+  @Roles(Role.GESTOR_PEDIDOS)
   @Post('crear')
   create(@Payload() createEnvioDto: CreateEnvioDto) {
     return this.client.send('createEnvio',  createEnvioDto)

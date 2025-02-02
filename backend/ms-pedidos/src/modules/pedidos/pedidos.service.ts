@@ -212,6 +212,7 @@ export class PedidosService {
       });
     }
   }
+
   //VALIDAR EXISTENCIA PEDIDO  
 
   async validateId(id: number) {
@@ -231,6 +232,50 @@ export class PedidosService {
       return pedido;
     } catch (error) {
       throw new Error(`Error al buscar el pedido: ${error.message}`);
+    }
+  }
+
+  //ACTUALIZAR ESTADO A ENVIADO
+  // Método para cambiar el estado del pedido a "ENVIADO"
+  async updatePedidoStatus(idPedido: number) {
+    const logger = new Logger('Update-Pedido-Status');
+    try {
+      // Buscar el pedido
+      const pedido = await this.prisma.pedidos.findUnique({
+        where: { id_pedido: idPedido },
+      });
+
+      if (!pedido) {
+        throw new RpcException({
+          status: HttpStatus.NOT_FOUND,
+          message: `No se encontró el pedido con ID ${idPedido}`,
+        });
+      }
+
+      if (pedido.estado !== 'PENDIENTE') {
+        throw new RpcException({
+          status: HttpStatus.BAD_REQUEST,
+          message: 'Solo se pueden enviar pedidos en estado PENDIENTE',
+        });
+      }
+
+      // Actualizar el estado del pedido a "ENVIADO"
+      const pedidoActualizado = await this.prisma.pedidos.update({
+        where: { id_pedido: idPedido },
+        data: { estado: 'ENVIADO' },
+      });
+
+      return {
+        status: HttpStatus.OK,
+        message: `Pedido #${idPedido} marcado como ENVIADO`,
+        pedido: pedidoActualizado,
+      };
+    } catch (error) {
+      logger.error(`Error al actualizar estado del pedido ${idPedido}`, error.stack);
+      throw new RpcException({
+        status: HttpStatus.INTERNAL_SERVER_ERROR,
+        message: error.message || 'Error al actualizar el estado del pedido',
+      });
     }
   }
 

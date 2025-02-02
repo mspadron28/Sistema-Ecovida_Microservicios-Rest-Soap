@@ -9,6 +9,7 @@ import {
   Inject,
   UseGuards,
   ParseIntPipe,
+  Put,
 } from '@nestjs/common';
 
 import { ClientProxy, RpcException } from '@nestjs/microservices';
@@ -29,6 +30,20 @@ export class ProductosController {
   @Roles(Role.GESTOR_PRODUCTOS)
   create(@Body() createProductoDto: CreateProductoDto) {
     return this.client.send('createProducto', createProductoDto).pipe(
+      catchError((error) => {
+        throw new RpcException(error);
+      }),
+    );
+  }
+
+  @UseGuards(AuthGuard, RoleGuard)
+  @Put('update/:id_producto') // ✅ Modificar un producto
+  @Roles(Role.GESTOR_PRODUCTOS)
+  update(
+    @Param('id_producto', ParseIntPipe) id_producto: number,
+    @Body() updateDto: CreateProductoDto,
+  ) {
+    return this.client.send('updateProducto', { id_producto, updateDto }).pipe(
       catchError((error) => {
         throw new RpcException(error);
       }),
@@ -103,9 +118,9 @@ export class ProductosController {
   }
 
   @UseGuards(AuthGuard, RoleGuard)
-  @Patch() //Actualizar un producto
+  @Patch() //Actualizar estado producto
   @Roles(Role.GESTOR_PRODUCTOS)
-  update(@Body() updateProductoDto: UpdateProductoDto) {
+  updateStaus(@Body() updateProductoDto: UpdateProductoDto) {
     return this.client.send('actualizarStatusProducto', updateProductoDto).pipe(
       catchError((error) => {
         throw new RpcException(error);

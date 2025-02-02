@@ -33,8 +33,6 @@ export class CarritosController {
     @Payload() createCarritoDto: CreateCarritoDto,
     @User('id') idUser: string,
   ) {
-    const logger = new Logger('Revisar payload de dto:');
-    logger.log(`Spread operator ${createCarritoDto}`);
     return this.client
       .send('createCarrito', { ...createCarritoDto, idUser })
       .pipe(

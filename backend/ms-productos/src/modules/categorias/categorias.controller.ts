@@ -24,4 +24,12 @@ export class CategoriasController {
   findOne(@Payload() nombre: string) {
     return this.categoriasService.findOne(nombre);
   }
+
+  // Agregar el MessagePattern para actualizar categoría
+  @MessagePattern('updateCategoria')
+  update(
+    @Payload() data: { id_categoria: number; updateDto: { nombre: string } },
+  ) {
+    return this.categoriasService.update(data.id_categoria, data.updateDto);
+  }
 }

@@ -74,4 +74,21 @@ export class CategoriasService {
       });
     }
   }
+
+  //Actualizar una categoría
+  async update(id_categoria: number, updateCategoriaDto: { nombre: string }) {
+    try {
+      const categoria = await this.prisma.categorias.update({
+        where: { id_categoria },
+        data: { nombre: updateCategoriaDto.nombre }, 
+      });
+
+      return { message: 'Categoría actualizada exitosamente', categoria };
+    } catch (error) {
+      throw new RpcException({
+        message: error.message || 'Error al actualizar la categoría.',
+        status: HttpStatus.BAD_REQUEST,
+      });
+    }
+  }
 }

@@ -28,6 +28,23 @@ export class ProductosService {
     }
   }
 
+    // Modificar producto
+    async update(id_producto: number, updateProductoDto: CreateProductoDto) {
+      try {
+        const producto = await this.prisma.productos.update({
+          where: { id_producto },
+          data: updateProductoDto,
+        });
+  
+        return { message: 'Producto actualizado exitosamente', producto };
+      } catch (error) {
+        throw new RpcException({
+          message: error.message || 'Error al actualizar el producto.',
+          status: HttpStatus.BAD_REQUEST,
+        });
+      }
+    }
+
   //Obtener todos los productos
   async findAll() {
     try {
@@ -78,6 +95,7 @@ export class ProductosService {
         },
         select: {
           id_producto: true,
+          id_categoria: true,
           nombre: true,
           precio: true,
           stock: true,

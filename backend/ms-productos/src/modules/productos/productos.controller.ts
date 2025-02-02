@@ -32,6 +32,13 @@ export class ProductosController {
   create(@Payload() createProductoDto: CreateProductoDto) {
     return this.productosService.create(createProductoDto);
   }
+
+   // Modificar un producto
+   @MessagePattern('updateProducto')
+   update(@Payload() data: { id_producto: number; updateDto: CreateProductoDto }) {
+     return this.productosService.update(data.id_producto, data.updateDto);
+   }
+
   // Obtener todos los productos
   @MessagePattern('findAllProductos')
   findAll() {

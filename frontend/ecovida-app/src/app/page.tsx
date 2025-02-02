@@ -1,17 +1,16 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardFooter,
+  CardHeader,
+} from "@/components/ui/card";
 import Image from "next/image";
-import CarouselHome from "./ui/inicio/CarouselHome"; // Importa el componente
+import ImageCarousel from "@/app/ui/inicio/ImageCarousel"; // Nuevo componente de carrusel
 
 export default function Home() {
-  const products = [
-    { name: "Manzanas Orgánicas", price: "$3.99", image: "/images/apple.png" },
-    { name: "Tomates Cherry", price: "$2.49", image: "/images/tomatocherry.png" },
-    { name: "Avena Ecológica", price: "$5.99", image: "/images/oat.png" },
-  ];
-
   return (
     <main className="bg-white min-h-screen">
       {/* Hero Section */}
@@ -22,13 +21,13 @@ export default function Home() {
             Come Orgánico, Vive Bien
           </h1>
           <p className="mt-4 text-lg md:text-xl text-green-600">
-            Productos de temporada
+            Productos de temporada y ecológicos
           </p>
         </div>
 
-        {/* Carousel de productos */}
-        <div className="flex-1">
-          <CarouselHome products={products} />
+        {/* Nuevo Carousel de productos ecológicos */}
+        <div className="flex-1 w-full max-w-2xl">
+          <ImageCarousel />
         </div>
       </section>
 
@@ -39,60 +38,40 @@ export default function Home() {
         </h2>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-          {[{ title: "Verduras", image: "/images/vegetables.png" }, { title: "Frutas", image: "/images/fruits.png" }, { title: "Granos", image: "/images/grains.png" }].map((category, index) => (
-            <Card key={index} className="hover:shadow-lg transition">
-              <CardHeader>
-                <Image
-                  src={category.image}
-                  alt={category.title}
-                  width={300}
-                  height={300}
-                  className="rounded-t-lg object-cover"
-                />
-              </CardHeader>
-              <CardContent>
-                <h3 className="text-xl font-semibold text-gray-800 text-center">
+          {[
+            { title: "Verduras", image: "/images/vegetables.png" },
+            { title: "Frutas", image: "/images/fruits.png" },
+            { title: "Granos", image: "/images/grains.png" },
+            { title: "Cuidado Personal", image: "/images/personal-care.png" },
+            { title: "Artículos Ecológicos", image: "/images/eco-items.png" },
+          ].map((category, index) => (
+            <Card
+              key={index}
+              className="relative w-full h-[300px] overflow-hidden rounded-lg shadow-lg"
+            >
+              {/* Imagen de fondo que cubre todo el contenedor */}
+              <Image
+                src={category.image}
+                alt={category.title}
+                layout="fill"
+                objectFit="cover"
+                className="absolute inset-0 w-full h-full"
+              />
+
+              {/* Capa oscura para mejorar la visibilidad del texto */}
+              <div className="absolute inset-0 bg-black bg-opacity-40"></div>
+
+              {/* Título de la categoría sobre la imagen */}
+              <div className="absolute inset-0 flex items-center justify-center">
+                <h3 className="text-white text-2xl font-bold text-center px-4 bg-black bg-opacity-60 rounded-md py-2">
                   {category.title}
                 </h3>
-              </CardContent>
+              </div>
             </Card>
           ))}
         </div>
       </section>
 
-      {/* Productos destacados */}
-      <section className="py-16 px-8 md:px-16 bg-green-50">
-        <h2 className="text-3xl font-bold text-green-700 text-center mb-12">
-          Productos Destacados
-        </h2>
-
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-          {[{ name: "Manzanas Orgánicas", price: "$3.99", image: "/images/apple.png" }, { name: "Zanahorias", price: "$1.99", image: "/images/carrot.png" }, { name: "Leche de Almendras", price: "$4.99", image: "/images/almond-milk.png" }, { name: "Pan Integral", price: "$2.49", image: "/images/bread.png" }].map((product, index) => (
-            <Card key={index} className="hover:shadow-lg transition">
-              <CardHeader>
-                <Image
-                  src={product.image}
-                  alt={product.name}
-                  width={300}
-                  height={300}
-                  className="rounded-t-lg object-cover"
-                />
-              </CardHeader>
-              <CardContent>
-                <h3 className="text-lg font-semibold text-gray-800 text-center">
-                  {product.name}
-                </h3>
-                <p className="text-green-600 font-bold text-center">{product.price}</p>
-              </CardContent>
-              <CardFooter>
-                <Button className="w-full bg-cyan-500 hover:bg-cyan-600 text-white">
-                  Agregar al Carrito
-                </Button>
-              </CardFooter>
-            </Card>
-          ))}
-        </div>
-      </section>
     </main>
   );
 }

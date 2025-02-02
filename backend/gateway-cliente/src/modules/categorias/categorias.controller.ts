@@ -7,6 +7,7 @@ import {
   Inject,
   UseGuards,
   ParseIntPipe,
+  Put,
 } from '@nestjs/common';
 import { ClientProxy, RpcException } from '@nestjs/microservices';
 import { NATS_SERVICE } from 'src/config';
@@ -32,9 +33,9 @@ export class CategoriasController {
     );
   }
 
-  //@UseGuards(AuthGuard, RoleGuard)
+  @UseGuards(AuthGuard, RoleGuard)
   @Get() // Obtener todas las categorías
-  //@Roles(Role.GESTOR_PRODUCTOS)
+  @Roles(Role.GESTOR_PRODUCTOS,Role.USUARIO)
   findAll() {
     return this.client.send('findAllCategorias', {}).pipe(
       catchError((error) => {
@@ -43,8 +44,26 @@ export class CategoriasController {
     );
   }
 
+  // Actualizar la categoría
+  @UseGuards(AuthGuard, RoleGuard)
+  @Roles(Role.GESTOR_PRODUCTOS)
+  @Put('update/:id_categoria')
+  update(
+    @Param('id_categoria', ParseIntPipe) id_categoria: number,
+    @Body() updateDto: { nombre: string },
+  ) {
+    return this.client
+      .send('updateCategoria', { id_categoria, updateDto })
+      .pipe(
+        catchError((error) => {
+          throw new RpcException(error);
+        }),
+      );
+  }
+  @UseGuards(AuthGuard, RoleGuard)
+  @Roles(Role.GESTOR_PRODUCTOS, Role.USUARIO)
   @Get(':nombre') // Obtener una categoría por ID
-  findOne(@Param('nombre',) nombre: string) {
+  findOne(@Param('nombre') nombre: string) {
     return this.client.send('findOneCategoria', nombre).pipe(
       catchError((error) => {
         throw new RpcException(error);

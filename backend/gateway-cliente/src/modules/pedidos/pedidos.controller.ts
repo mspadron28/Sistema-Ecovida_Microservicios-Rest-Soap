@@ -4,6 +4,7 @@ import {
   Inject,
   Param,
   ParseIntPipe,
+  Patch,
   Post,
   UseGuards,
 } from '@nestjs/common';
@@ -31,6 +32,19 @@ export class PedidosController {
       }),
     );
   }
+
+  //ACTUALIZAR ESTADO A ENVIADO 
+    // ✅ Endpoint para actualizar estado del pedido a "ENVIADO"
+    @UseGuards(AuthGuard, RoleGuard)
+    @Roles(Role.GESTOR_PEDIDOS)
+    @Patch(':id/enviar')
+    updateStatus(@Param('id', ParseIntPipe) id: number) {
+      return this.client.send('updatePedidoStatus', id).pipe(
+        catchError((error) => {
+          throw new RpcException(error);
+        }),
+      );
+    }
 
   //Crear pedido + detalle
   @UseGuards(AuthGuard, RoleGuard)
@@ -62,7 +76,7 @@ export class PedidosController {
 
   //Obtener todos los pedidos + detalle
   @UseGuards(AuthGuard, RoleGuard)
-  @Roles(Role.GESTOR_PEDIDOS, Role.USUARIO)
+  @Roles(Role.GESTOR_PEDIDOS)
   @Get()
   findAll() {
     return this.client.send('findAllPedidos', {});

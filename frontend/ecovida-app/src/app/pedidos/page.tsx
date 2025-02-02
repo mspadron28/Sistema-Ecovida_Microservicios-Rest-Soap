@@ -1,10 +1,12 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { useSession } from "next-auth/react";
+import { getSession, useSession } from "next-auth/react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { FaLeaf, FaCheckCircle, FaClock } from "react-icons/fa";
+import { Role } from "@/lib/roles.enum";
+import GestionPedido from "../ui/pedidos/GestionPedido";
 
 interface Pedido {
   id_pedido: number;
@@ -26,23 +28,53 @@ export default function PedidosPage() {
   const [pedidos, setPedidos] = useState<Pedido[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [token, setToken] = useState<string | null>(null);
+  const [isUsuario, setIsUsuario] = useState(false);
+  const [isGestorPedidos, setIsGestorPedidos] = useState(false);
+  const [pedidoSeleccionado, setPedidoSeleccionado] = useState<number | null>(null);
 
+    // ✅ Validar si el usuario tiene el rol de USUARIO o GESTOR_PEDIDOS
+    useEffect(() => {
+      const fetchSession = async () => {
+        try {
+          const session = await getSession();
+  
+          if (session && session.user) {
+            const usuarioValido = session.user.roles.includes(Role.USUARIO);
+            const gestorPedidosValido = session.user.roles.includes(Role.GESTOR_PEDIDOS);
+  
+            setIsUsuario(usuarioValido);
+            setIsGestorPedidos(gestorPedidosValido);
+  
+            if (usuarioValido || gestorPedidosValido) {
+              setToken(session.user.token);
+            }
+          }
+        } catch {
+          setIsUsuario(false);
+          setIsGestorPedidos(false);
+        }
+      };
+  
+      fetchSession();
+    }, []);
+
+  // ✅ Obtener pedidos según el rol del usuario
   useEffect(() => {
+    if (!token) return; // No ejecutar si no hay token disponible
+
     const fetchPedidos = async () => {
-      if (!session || !session.user) {
-        setError("No se encontró la sesión del usuario.");
-        setLoading(false);
-        return;
-      }
-
-      const userToken = session.user.token;
-
       try {
-        const response = await fetch("http://localhost:3000/api/pedidos/usuario", {
+        // Seleccionar el endpoint según el rol del usuario
+        const endpoint = isGestorPedidos
+          ? "http://localhost:3000/api/pedidos"
+          : "http://localhost:3000/api/pedidos/usuario";
+
+        const response = await fetch(endpoint, {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${userToken}`,
+            Authorization: `Bearer ${token}`,
           },
         });
 
@@ -60,7 +92,7 @@ export default function PedidosPage() {
     };
 
     fetchPedidos();
-  }, [session]);
+  }, [token, isGestorPedidos]);
 
   if (status === "loading" || loading) {
     return (
@@ -85,7 +117,9 @@ export default function PedidosPage() {
         <div className="flex items-center justify-center">
           <FaLeaf className="text-green-500 mr-2" size={32} />
           <h1 className="text-3xl font-bold text-green-600">
-            Mis Pedidos - EcoVida
+            {isGestorPedidos
+              ? "Gestión de Pedidos - EcoVida"
+              : "Mis Pedidos - EcoVida"}
           </h1>
         </div>
         <p className="text-gray-600 mt-2">
@@ -95,7 +129,11 @@ export default function PedidosPage() {
 
       {pedidos.length === 0 ? (
         <div className="text-center">
-          <p>No tienes pedidos registrados.</p>
+          <p>
+            {isGestorPedidos
+              ? "No hay pedidos disponibles para gestionar."
+              : "No tienes pedidos registrados."}
+          </p>
         </div>
       ) : (
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
@@ -112,14 +150,14 @@ export default function PedidosPage() {
                       Pedido #{pedido.id_pedido}
                     </CardTitle>
                     <div className="flex items-center">
-                      {pedido.estado === "Entregado" ? (
+                      {pedido.estado === "ENVIADO" ? (
                         <>
                           <FaCheckCircle
                             className="text-green-500 mr-2"
                             size={20}
                           />
                           <span className="text-green-500 font-medium">
-                            Entregado
+                            ENVIADO
                           </span>
                         </>
                       ) : (
@@ -169,15 +207,28 @@ export default function PedidosPage() {
                     Cantidad total: {pedido.cantidadTotalPedido}
                   </p>
                 </div>
-                <Button
-                  className="w-full bg-cyan-500 text-white rounded-md hover:bg-cyan-600 mt-4"
-                  size="lg"
-                >
-                  Ver Detalles
-                </Button>
+                {/* Mostrar botón solo si es gestor */}
+                {isGestorPedidos && (
+                  <Button
+                    className="w-full bg-cyan-500 text-white rounded-md hover:bg-cyan-600 mt-4"
+                    onClick={() => setPedidoSeleccionado(pedido.id_pedido)}
+                    size="lg"
+                  >
+                    Gestionar pedido
+                  </Button>
+                )}
               </CardContent>
             </Card>
           ))}
+
+          {/* Renderizar el diálogo si hay un pedido seleccionado */}
+          {pedidoSeleccionado && (
+            <GestionPedido
+              open={!!pedidoSeleccionado}
+              onClose={() => setPedidoSeleccionado(null)}
+              idPedido={pedidoSeleccionado}
+            />
+          )}
         </div>
       )}
     </div>

@@ -15,6 +15,12 @@ export class PedidosController {
     return this.pedidosService.create(items, idUser);
   }
 
+   // ✅ Nuevo endpoint para cambiar el estado del pedido a "ENVIADO"
+   @MessagePattern('updatePedidoStatus')
+   updateStatus(@Payload() idPedido: number) {
+     return this.pedidosService.updatePedidoStatus(idPedido);
+   }
+
   @MessagePattern('findAllPedidos')
   findAll() {
     return this.pedidosService.findAll();

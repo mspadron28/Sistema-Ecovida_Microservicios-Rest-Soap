@@ -1,0 +1,1 @@
+export const productos = ['almond-milk','apple','bread','carrot','fruits','grains','oat','tomato','tomatocherry','vegetables'];
