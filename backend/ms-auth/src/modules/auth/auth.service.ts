@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { RpcException } from '@nestjs/microservices';
-import { LoginUserDto, RegisterUserDto } from './dto';
+import { LoginUserDto, RegisterUserDto, UpdateUserDto } from './dto';
 import * as bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
 import { JwtPayload } from './interfaces/jwt-payload.interface';
@@ -140,6 +140,98 @@ export class AuthService {
         status: 400,
         message: error.message,
       });
+    }
+  }
+
+  //OBTENER TODOS LOS USUARIOS
+  async getAllUsers() {
+    try {
+      const users = await this.prisma.user.findMany({
+        select: {
+          id: true,
+          nombre: true,
+          email: true,
+          activo: true,
+          fechaRegistro: true,
+          roles: true, // Asegurar que se devuelven los roles
+        },
+      });
+
+      return { message: 'Usuarios obtenidos exitosamente', users };
+    } catch (error) {
+      throw new RpcException({
+        status: 500,
+        message: 'Error al obtener los usuarios',
+      });
+    }
+  }
+  //MODIFICAR USUARIO (ADMINISTRADOR)
+  async updateUser(id: string, updateUserDto: UpdateUserDto) {
+    const { nombre, roles } = updateUserDto;
+
+    try {
+      // Verificar si el usuario existe
+      const user = await this.prisma.user.findUnique({ where: { id } });
+      if (!user) {
+        throw new RpcException({ status: 404, message: 'Usuario no encontrado' });
+      }
+
+      // Si se envían roles, validar que existan en la base de datos
+      let roleIds: string[] = [];
+      if (roles && roles.length > 0) {
+        const foundRoles = await this.prisma.role.findMany({
+          where: { nombre: { in: roles } },
+        });
+
+        if (foundRoles.length !== roles.length) {
+          throw new RpcException({
+            status: 400,
+            message: 'Algunos roles son inválidos o no existen',
+          });
+        }
+        roleIds = foundRoles.map((role) => role.id);
+      }
+
+      // Actualizar usuario
+      const updatedUser = await this.prisma.user.update({
+        where: { id },
+        data: {
+          nombre,
+          roles: roleIds.length > 0 ? roleIds : undefined, // Solo actualizar roles si se envían
+        },
+      });
+
+      return {
+        message: 'Usuario actualizado exitosamente',
+        user: updatedUser,
+      };
+    } catch (error) {
+      throw new RpcException({ status: 500, message: error.message });
+    }
+  }
+
+  // Toggle para activar/desactivar usuario (Soft Delete)
+  async toggleUserStatus(id: string) {
+    try {
+      const user = await this.prisma.user.findUnique({ where: { id } });
+
+      if (!user) {
+        throw new RpcException({ status: 404, message: 'Usuario no encontrado' });
+      }
+
+      const nuevoEstado = !user.activo; // Invierte el estado actual
+
+      await this.prisma.user.update({
+        where: { id },
+        data: { activo: nuevoEstado },
+      });
+
+      return { 
+        message: `Usuario ${nuevoEstado ? 'activado' : 'desactivado'} correctamente`,
+        activo: nuevoEstado
+      };
+    } catch (error) {
+      throw new RpcException({ status: 500, message: error.message });
     }
   }
 }

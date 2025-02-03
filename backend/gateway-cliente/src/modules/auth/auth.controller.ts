@@ -1,7 +1,16 @@
-import { Body, Controller, Inject, Post, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Inject,
+  Param,
+  Patch,
+  Post,
+  UseGuards,
+} from '@nestjs/common';
 import { ClientProxy, RpcException } from '@nestjs/microservices';
 import { NATS_SERVICE } from 'src/config';
-import { LoginUserDto, RegisterUserDto } from './dto';
+import { LoginUserDto, RegisterUserDto, UpdateUserDto } from './dto';
 
 import { Token, User } from './decorators';
 import { CurrentUser } from './interfaces/current-user.interface';
@@ -18,27 +27,25 @@ export class AuthController {
   @Post('register')
   //@Roles(Role.ADMINISTRADOR,Role.USUARIO)
   registerUser(@Body() registerUser: RegisterUserDto) {
-    return this.client.send('auth.register.user', registerUser)
-    .pipe(
-      catchError(error=>{
-        throw new RpcException(error)
-      })
+    return this.client.send('auth.register.user', registerUser).pipe(
+      catchError((error) => {
+        throw new RpcException(error);
+      }),
     );
   }
 
   @Post('login')
   loginUser(@Body() loginUser: LoginUserDto) {
-    return this.client.send('auth.login.user', loginUser)
-    .pipe(
-      catchError(error=>{
-        throw new RpcException(error)
-      })
+    return this.client.send('auth.login.user', loginUser).pipe(
+      catchError((error) => {
+        throw new RpcException(error);
+      }),
     );
   }
-  
+
   @UseGuards(AuthGuard, RoleGuard)
   @Post('verify')
-  @Roles(Role.ADMINISTRADOR, Role.GESTOR_ENVIOS,Role.USUARIO)
+  @Roles(Role.ADMINISTRADOR, Role.USUARIO)
   verifyToken(@User() user: CurrentUser, @Token() token: string) {
     try {
       // Lógica principal
@@ -47,6 +54,41 @@ export class AuthController {
       // Manejo de errores
       throw new RpcException(error);
     }
-    
   }
+
+  //Obtener todos los usuarios (Solo administradores)
+  @UseGuards(AuthGuard, RoleGuard)
+  @Get('users')
+  @Roles(Role.ADMINISTRADOR)
+  getAllUsers() {
+    return this.client.send('auth.getAllUsers', {}).pipe(
+      catchError((error) => {
+        throw new RpcException(error);
+      }),
+    );
+  }
+
+  //MODIFICAR USUARIO (Solo Administradores)
+  @UseGuards(AuthGuard, RoleGuard)
+  @Patch('users/:id')
+  @Roles(Role.ADMINISTRADOR)
+  updateUser(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
+    return this.client.send('auth.update.user', { id, updateUserDto }).pipe(
+      catchError((error) => {
+        throw new RpcException(error);
+      }),
+    );
+  }
+
+    // ✅ Toggle para activar/desactivar usuario (Soft Delete)
+    @UseGuards(AuthGuard, RoleGuard)
+    @Patch('users/:id/toggle-status')
+    @Roles(Role.ADMINISTRADOR)
+    toggleUserStatus(@Param('id') id: string) {
+      return this.client.send('auth.toggleUserStatus', id).pipe(
+        catchError((error) => {
+          throw new RpcException(error);
+        }),
+      );
+    }
 }

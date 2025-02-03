@@ -82,9 +82,9 @@ useEffect(() => {
           }
         );
         if (response.status === 404) {
-          return;
-        }
-
+        console.log("El usuario aún no tiene un carrito. Esperando...");
+        return;
+      }
         if (!response.ok) {
           throw new Error("Error al obtener los datos del carrito");
         }
