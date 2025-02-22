@@ -24,7 +24,7 @@ export class CategoriasController {
 
   @UseGuards(AuthGuard, RoleGuard)
   @Post() // Crear una categoría
-  @Roles(Role.GESTOR_PRODUCTOS)
+  @Roles(Role.GESTOR_PRODUCTOS, Role.ADMINISTRADOR)
   create(@Body() createCategoriaDto: CreateCategoriaDto) {
     return this.client.send('createCategoria', createCategoriaDto).pipe(
       catchError((error) => {
@@ -35,7 +35,7 @@ export class CategoriasController {
 
   @UseGuards(AuthGuard, RoleGuard)
   @Get() // Obtener todas las categorías
-  @Roles(Role.GESTOR_PRODUCTOS,Role.USUARIO)
+  @Roles(Role.GESTOR_PRODUCTOS,Role.USUARIO,Role.ADMINISTRADOR)
   findAll() {
     return this.client.send('findAllCategorias', {}).pipe(
       catchError((error) => {
@@ -46,7 +46,7 @@ export class CategoriasController {
 
   // Actualizar la categoría
   @UseGuards(AuthGuard, RoleGuard)
-  @Roles(Role.GESTOR_PRODUCTOS)
+  @Roles(Role.GESTOR_PRODUCTOS,Role.ADMINISTRADOR)
   @Put('update/:id_categoria')
   update(
     @Param('id_categoria', ParseIntPipe) id_categoria: number,
@@ -61,7 +61,7 @@ export class CategoriasController {
       );
   }
   @UseGuards(AuthGuard, RoleGuard)
-  @Roles(Role.GESTOR_PRODUCTOS, Role.USUARIO)
+  @Roles(Role.GESTOR_PRODUCTOS, Role.USUARIO,Role.ADMINISTRADOR)
   @Get(':nombre') // Obtener una categoría por ID
   findOne(@Param('nombre') nombre: string) {
     return this.client.send('findOneCategoria', nombre).pipe(

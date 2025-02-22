@@ -41,7 +41,7 @@ export default function CategoryDetailPage() {
   const [productoSeleccionado, setProductoSeleccionado] =
     useState<Producto | null>(null);
   const [openForm, setOpenForm] = useState(false);
-
+  const [idCategoria, setIdCategoria] = useState<number | null>(null);
   const { data: session } = useSession();
   const { cartItems, addToCart, updateCartItem } = useCart();
 
@@ -76,13 +76,43 @@ export default function CategoryDetailPage() {
 
         const data = await response.json();
         setProductos(data);
+
+        // Si hay productos, obtener el ID de la categoría del primer producto
+        if (data.length > 0) {
+          setIdCategoria(data[0].id_categoria);
+        } 
       } catch (err) {
-        setError("No se pudieron cargar los productos. Por favor, inténtalo de nuevo.");
+        fetchCategoriaId();
+        setError(
+          "No se pudieron encontrar productos para esta categoría. Espera a que sean añadidos."
+        );
       } finally {
         setLoading(false);
       }
     }
+    async function fetchCategoriaId() {
+      try {
+        const response = await fetch(
+          `http://localhost:3000/api/categorias/${decodeURIComponent(nombre as string)}`,
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
 
+        if (!response.ok) {
+          throw new Error("Error al obtener la categoría");
+        }
+
+        const categoriaData = await response.json();
+        setIdCategoria(categoriaData.id_categoria);
+      } catch (err) {
+        console.error("Error obteniendo la categoría:", err);
+      }
+    }
     fetchProductos();
   }, [nombre, token, openForm]);
 
@@ -93,7 +123,7 @@ export default function CategoryDetailPage() {
           <span className="text-green-500">
             <CheckCircle size={32} />
           </span>
-          Productos de {nombre}
+          Productos de {decodeURIComponent(nombre as string)}
         </h1>
 
         {/* ✅ Botón para crear producto (solo para gestores de productos) */}
@@ -168,7 +198,9 @@ export default function CategoryDetailPage() {
 
               <CardContent>
                 <p className="text-xl font-semibold text-cyan-600">
-                  {producto.precio ? `$${producto.precio}` : "Precio no disponible"}
+                  {producto.precio
+                    ? `$${producto.precio}`
+                    : "Precio no disponible"}
                 </p>
 
                 {/* ✅ Mostrar stock solo si el usuario es gestor de productos */}
@@ -187,7 +219,11 @@ export default function CategoryDetailPage() {
                     )}
                   </p>
                 ) : (
-                  <p className={`text-lg font-semibold mt-3 ${producto.stock > 0 ? "text-green-500" : "text-red-500"}`}>
+                  <p
+                    className={`text-lg font-semibold mt-3 ${
+                      producto.stock > 0 ? "text-green-500" : "text-red-500"
+                    }`}
+                  >
                     {producto.stock > 0 ? "✅ Disponible" : "❌ No disponible"}
                   </p>
                 )}
@@ -214,7 +250,11 @@ export default function CategoryDetailPage() {
                         ? "bg-blue-500 hover:bg-blue-600"
                         : "bg-green-500 hover:bg-green-600"
                     }`}
-                    disabled={producto.stock === 0 || !producto.status || stockMaximoAlcanzado}
+                    disabled={
+                      producto.stock === 0 ||
+                      !producto.status ||
+                      stockMaximoAlcanzado
+                    }
                   >
                     <ShoppingCart size={16} />
                     {stockMaximoAlcanzado
@@ -230,14 +270,14 @@ export default function CategoryDetailPage() {
         })}
       </div>
 
-         {/* ✅ Renderizar FormProducto si se abre */}
-         {openForm && token && (
+      {/* ✅ Renderizar FormProducto si se abre */}
+      {openForm && token && (
         <FormProducto
           open={openForm}
           onClose={() => setOpenForm(false)}
           idProducto={productoSeleccionado?.id_producto}
           productoActual={productoSeleccionado || undefined}
-          idCategoria={productos[0]?.id_categoria || 0}
+          idCategoria={idCategoria || 0} 
           token={token}
         />
       )}

@@ -18,7 +18,7 @@ const Login = () => {
     const res = await signIn("credentials", {
       email,
       password,
-      callbackUrl: "/",
+      redirect: false,
     });
 
     if (res?.error) {
