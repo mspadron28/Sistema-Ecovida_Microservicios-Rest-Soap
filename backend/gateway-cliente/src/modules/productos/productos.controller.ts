@@ -13,7 +13,7 @@ import {
 } from '@nestjs/common';
 
 import { ClientProxy, RpcException } from '@nestjs/microservices';
-import { NATS_SERVICE } from 'src/config';
+import { NATS_SERVICE } from '../../config';
 import { Roles } from '../auth/decorators/roles.decorator';
 import { AuthGuard } from '../auth/guards';
 import { RoleGuard } from '../auth/guards';

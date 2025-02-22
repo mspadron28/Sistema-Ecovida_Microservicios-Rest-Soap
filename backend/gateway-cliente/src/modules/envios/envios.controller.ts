@@ -1,7 +1,7 @@
 import { Controller, Get, Inject, Post, UseGuards } from '@nestjs/common';
 import { ClientProxy, Payload, RpcException } from '@nestjs/microservices';
 import { catchError } from 'rxjs';
-import { NATS_SERVICE } from 'src/config';
+import { NATS_SERVICE } from '../../config';
 import { Roles } from '../auth/decorators/roles.decorator';
 import { AuthGuard, RoleGuard } from '../auth/guards';
 import { Role } from '../auth/lib/roles.enum';

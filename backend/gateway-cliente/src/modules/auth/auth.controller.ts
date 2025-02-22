@@ -9,7 +9,7 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { ClientProxy, RpcException } from '@nestjs/microservices';
-import { NATS_SERVICE } from 'src/config';
+import { NATS_SERVICE } from '../../config'; 
 import { LoginUserDto, RegisterUserDto, UpdateUserDto } from './dto';
 
 import { Token, User } from './decorators';

@@ -13,7 +13,7 @@ import {
 import { CreateCarritoDto } from './dto/create-carrito.dto';
 
 import { ClientProxy, Payload, RpcException } from '@nestjs/microservices';
-import { NATS_SERVICE } from 'src/config';
+import { NATS_SERVICE } from '../../config';
 import { AuthGuard, RoleGuard } from '../auth/guards';
 import { User } from '../auth/decorators';
 import { Roles } from '../auth/decorators/roles.decorator';

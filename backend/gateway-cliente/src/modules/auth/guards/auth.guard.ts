@@ -9,7 +9,7 @@ import {
 import { ClientProxy } from '@nestjs/microservices';
   import { Request } from 'express';
 import { firstValueFrom } from 'rxjs';
-import { NATS_SERVICE } from 'src/config';
+import { NATS_SERVICE } from '../../../config';
   
   @Injectable()
   export class AuthGuard implements CanActivate {
